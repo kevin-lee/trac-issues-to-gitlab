@@ -1,0 +1,40 @@
+target/
+
+.gradle
+*.pydevproject
+.project
+.classpath
+/.settings/
+*/.settings/*
+!*/.settings/.jsdtscope
+.metadata
+bin/
+src/main/java/com/lckymn/kevin/trac2gitlab/test
+
+ajcore.*.txt
+
+tmp/
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.loadpath
+
+# External tool builders
+.externalToolBuilders/
+
+# Locally stored "Eclipse launch configurations"
+*.launch
+
+# CDT-specific
+.cproject
+
+# PDT-specific
+.buildpath
+
+# for Mac
+.DS_Store
+
+# to ignore SVN
+.svn

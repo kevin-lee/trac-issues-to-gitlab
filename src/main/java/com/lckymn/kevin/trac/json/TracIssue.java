@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lckymn.kevin.trac2gitlab.json;
+package com.lckymn.kevin.trac.json;
 
 import static org.elixirian.kommonlee.util.Objects.*;
+import static org.elixirian.kommonlee.util.Strings.*;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.elixirian.jsonstatham.annotation.Json;
 import org.elixirian.jsonstatham.annotation.JsonField;
@@ -70,6 +74,9 @@ public class TracIssue
   private final String priority;
 
   @JsonField
+  private final String severity;
+
+  @JsonField
   private final String owner;
 
   @JsonField
@@ -80,8 +87,8 @@ public class TracIssue
 
   public TracIssue(final Integer id, final String summary, final List<String> keywords, final String status,
       final String resolution, final String type, final String version, final String milestone, final String reporter,
-      final Date time, final String component, final String description, final String priority, final String owner,
-      final Date changetime, final List<String> cc)
+      final Date time, final String component, final String description, final String priority, final String severity,
+      final String owner, final Date changetime, final List<String> cc)
   {
     this.id = id;
     this.summary = summary;
@@ -96,6 +103,7 @@ public class TracIssue
     this.component = component;
     this.description = description;
     this.priority = priority;
+    this.severity = severity;
     this.owner = owner;
     this.changetime = changetime;
     this.cc = cc;
@@ -166,6 +174,11 @@ public class TracIssue
     return priority;
   }
 
+  public String getSeverity()
+  {
+    return severity;
+  }
+
   public String getOwner()
   {
     return owner;
@@ -199,10 +212,40 @@ public class TracIssue
             .add("component", component)
             .add("description", description)
             .add("priority", priority)
+            .add("severity", severity)
             .add("owner", owner)
             .add("changetime", changetime)
             .add("cc", cc)
           .toString();
+    /* @formatter:on */
+  }
+
+  public static TracIssue newInstance(final Integer id, final Map<String, Object> map)
+  {
+    /* @formatter:off */
+    final String keywords = (String) map.get("keywords");
+    final String cc = (String) map.get("cc");
+    return new TracIssue(id,
+                         (String) map.get("summary"),
+                         isNullOrEmptyString(keywords) ?
+                             Collections.<String> emptyList() :
+                             Arrays.asList(keywords.split("[\\s]*,[\\s]*")),
+                         (String) map.get("status"),
+                         (String) map.get("resolution"),
+                         (String) map.get("type"),
+                         (String) map.get("version"),
+                         (String) map.get("milestone"),
+                         (String) map.get("reporter"),
+                         (Date) map.get("time"),
+                         (String) map.get("component"),
+                         (String) map.get("description"),
+                         (String) map.get("priority"),
+                         (String) map.get("severity"),
+                         (String) map.get("owner"),
+                         (Date) map.get("changetime"),
+                         isNullOrEmptyString(cc) ?
+                             Collections.<String> emptyList() :
+                             Arrays.asList(cc.split("[\\s]*,[\\s]*")));
     /* @formatter:on */
   }
 }

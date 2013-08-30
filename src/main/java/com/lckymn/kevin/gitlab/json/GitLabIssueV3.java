@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lckymn.kevin.trac2gitlab.json;
+package com.lckymn.kevin.gitlab.json;
 
 import static org.elixirian.kommonlee.util.Objects.*;
 

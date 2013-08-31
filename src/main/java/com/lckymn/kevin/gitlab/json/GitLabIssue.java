@@ -27,7 +27,7 @@ import org.elixirian.jsonstatham.annotation.JsonField;
  * @version 0.0.1 (2013-08-29)
  */
 @Json
-public class GitLabIssueV3
+public class GitLabIssue
 {
   /**
    * id (required) - The ID of a project
@@ -65,7 +65,7 @@ public class GitLabIssueV3
   @JsonField
   private final List<String> labels;
 
-  public GitLabIssueV3(final Long id, final String title, final String description, final Long assigneeId,
+  public GitLabIssue(final Long id, final String title, final String description, final Long assigneeId,
       final Long milestoneId, final List<String> labels)
   {
     this.id = id;

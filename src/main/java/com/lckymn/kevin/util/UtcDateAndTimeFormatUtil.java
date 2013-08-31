@@ -15,6 +15,8 @@
  */
 package com.lckymn.kevin.util;
 
+import static org.elixirian.kommonlee.util.Strings.*;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -36,8 +38,12 @@ public final class UtcDateAndTimeFormatUtil
     throw new IllegalAccessException(getClass().getName() + CommonConstants.CANNOT_BE_INSTANTIATED);
   }
 
-  public static Date parseDateAndTime(final String dateAndTime)
+  public static Date parseDateAndTimeIfNeitherNullNorEmpty(final String dateAndTime)
   {
+    if (isNullOrEmptyString(dateAndTime))
+    {
+      return null;
+    }
     final SimpleDateFormat dateFormat = new SimpleDateFormat(UTC_FORMAT);
     dateFormat.setTimeZone(TimeZone.getTimeZone(UTC));
     try
@@ -50,8 +56,12 @@ public final class UtcDateAndTimeFormatUtil
     }
   }
 
-  public static String formatDateAndTime(final Date dateAndTime)
+  public static String formatDateAndTimeIfNotNull(final Date dateAndTime)
   {
+    if (null == dateAndTime)
+    {
+      return null;
+    }
     final SimpleDateFormat dateFormat = new SimpleDateFormat(UTC_FORMAT);
     dateFormat.setTimeZone(TimeZone.getTimeZone(UTC));
     String formattedDateAndTime;

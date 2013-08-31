@@ -35,6 +35,20 @@ public class GitLabProject
   @Json
   public static class Owner
   {
+    public static final Owner EMPTY_OWNER = new Owner(null, "", "", "", "", null) {
+      @Override
+      public boolean isEmpty()
+      {
+        return true;
+      }
+
+      @Override
+      public boolean isNotEmpty()
+      {
+        return false;
+      }
+    };
+
     @JsonField
     public final Long id;
 
@@ -62,12 +76,22 @@ public class GitLabProject
       this.email = email;
       this.name = name;
       this.state = state;
-      this.createdAt = UtcDateAndTimeFormatUtil.parseDateAndTime(createdAt);
+      this.createdAt = UtcDateAndTimeFormatUtil.parseDateAndTimeIfNeitherNullNorEmpty(createdAt);
     }
 
     public String getCreatedAt()
     {
-      return UtcDateAndTimeFormatUtil.formatDateAndTime(createdAt);
+      return UtcDateAndTimeFormatUtil.formatDateAndTimeIfNotNull(createdAt);
+    }
+
+    public boolean isEmpty()
+    {
+      return false;
+    }
+
+    public boolean isNotEmpty()
+    {
+      return true;
     }
 
     @Override
@@ -89,6 +113,20 @@ public class GitLabProject
   @Json
   public static class Namespace
   {
+    public static final Namespace EMPTY_NAMESPACE = new Namespace(null, "", null, "", null, "", null) {
+      @Override
+      public boolean isEmpty()
+      {
+        return true;
+      }
+
+      @Override
+      public boolean isNotEmpty()
+      {
+        return false;
+      }
+    };
+
     @JsonField
     public final Long id;
 
@@ -117,21 +155,31 @@ public class GitLabProject
     {
       this.id = id;
       this.name = name;
-      this.createdAt = UtcDateAndTimeFormatUtil.parseDateAndTime(createdAt);
+      this.createdAt = UtcDateAndTimeFormatUtil.parseDateAndTimeIfNeitherNullNorEmpty(createdAt);
       this.description = description;
       this.ownerId = ownerId;
       this.path = path;
-      this.updatedAt = UtcDateAndTimeFormatUtil.parseDateAndTime(updatedAt);
+      this.updatedAt = UtcDateAndTimeFormatUtil.parseDateAndTimeIfNeitherNullNorEmpty(updatedAt);
     }
 
     public String getCreatedAtInUtcString()
     {
-      return UtcDateAndTimeFormatUtil.formatDateAndTime(createdAt);
+      return UtcDateAndTimeFormatUtil.formatDateAndTimeIfNotNull(createdAt);
     }
 
     public String getUpdatedAtInUtcString()
     {
-      return UtcDateAndTimeFormatUtil.formatDateAndTime(updatedAt);
+      return UtcDateAndTimeFormatUtil.formatDateAndTimeIfNotNull(updatedAt);
+    }
+
+    public boolean isEmpty()
+    {
+      return false;
+    }
+
+    public boolean isNotEmpty()
+    {
+      return true;
     }
 
     @Override
@@ -150,6 +198,22 @@ public class GitLabProject
       /* @formatter:on */
     }
   }
+
+  public static final GitLabProject EMPTY_GIT_LAB_PROJECT = new GitLabProject(null, "", null, false, "", "", "",
+      Owner.EMPTY_OWNER, "", "", "", "", false, false, false, false, false, null, null, Namespace.EMPTY_NAMESPACE) {
+
+    @Override
+    public boolean isEmpty()
+    {
+      return true;
+    }
+
+    @Override
+    public boolean isNotEmpty()
+    {
+      return false;
+    }
+  };
 
   @JsonField
   public final Long id;
@@ -236,19 +300,29 @@ public class GitLabProject
     this.wallEnabled = wallEnabled;
     this.wikiEnabled = wikiEnabled;
     this.snippetsEnabled = snippetsEnabled;
-    this.createdAt = UtcDateAndTimeFormatUtil.parseDateAndTime(createdAt);
-    this.lastActivityAt = UtcDateAndTimeFormatUtil.parseDateAndTime(lastActivityAt);
+    this.createdAt = UtcDateAndTimeFormatUtil.parseDateAndTimeIfNeitherNullNorEmpty(createdAt);
+    this.lastActivityAt = UtcDateAndTimeFormatUtil.parseDateAndTimeIfNeitherNullNorEmpty(lastActivityAt);
     this.namespace = namespace;
   }
 
   public String getCreatedAtInUtcString()
   {
-    return UtcDateAndTimeFormatUtil.formatDateAndTime(createdAt);
+    return UtcDateAndTimeFormatUtil.formatDateAndTimeIfNotNull(createdAt);
   }
 
   public String getLastActivityAtInUtcString()
   {
-    return UtcDateAndTimeFormatUtil.formatDateAndTime(lastActivityAt);
+    return UtcDateAndTimeFormatUtil.formatDateAndTimeIfNotNull(lastActivityAt);
+  }
+
+  public boolean isEmpty()
+  {
+    return false;
+  }
+
+  public boolean isNotEmpty()
+  {
+    return true;
   }
 
   @Override

@@ -26,4 +26,6 @@ import com.lckymn.kevin.gitlab.json.GitLabProject;
 public interface GitLabProjectService
 {
   List<GitLabProject> getAllGitLabProjects(String privateToken);
+
+  GitLabProject getProjectByPathWithNamespace(String privateToken, String pathWithNamespace);
 }

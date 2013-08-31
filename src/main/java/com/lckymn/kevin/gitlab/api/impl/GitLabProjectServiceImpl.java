@@ -15,7 +15,9 @@
  */
 package com.lckymn.kevin.gitlab.api.impl;
 
+import static com.lckymn.kevin.gitlab.api.GitLabApiConstants.*;
 import static com.lckymn.kevin.gitlab.api.GitLabApiUtil.*;
+import static org.elixirian.kommonlee.util.Objects.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +40,7 @@ public class GitLabProjectServiceImpl implements GitLabProjectService
   public GitLabProjectServiceImpl(final JsonStatham jsonStatham, final String url)
   {
     this.jsonStatham = jsonStatham;
-    this.url = url + (url.endsWith("/") ? "api/v3" : "/api/v3") + "/projects";
+    this.url = url + (url.endsWith("/") ? API_V3 : _API_V3) + _PROJECTS;
   }
 
   @Override
@@ -50,5 +52,20 @@ public class GitLabProjectServiceImpl implements GitLabProjectService
 
     final GitLabProject[] gitLabProjects = jsonStatham.convertFromJson(GitLabProject[].class, result);
     return Arrays.asList(gitLabProjects);
+  }
+
+  @Override
+  public GitLabProject getProjectByPathWithNamespace(final String privateToken, final String pathWithNamespace)
+  {
+    final List<GitLabProject> gitLabProjectList = getAllGitLabProjects(privateToken);
+
+    for (final GitLabProject gitLabProject : gitLabProjectList)
+    {
+      if (equal(gitLabProject.pathWithNamespace, pathWithNamespace))
+      {
+        return gitLabProject;
+      }
+    }
+    return GitLabProject.EMPTY_GIT_LAB_PROJECT;
   }
 }

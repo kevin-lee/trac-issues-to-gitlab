@@ -26,7 +26,7 @@ import org.elixirian.kommonlee.util.CommonConstants;
  * @author Lee, SeongHyun (Kevin)
  * @version 0.0.1 (2013-08-31)
  */
-public class UtcDateAndTimeFormatUtil
+public final class UtcDateAndTimeFormatUtil
 {
   public static final String UTC_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
   public static final String UTC = "UTC";

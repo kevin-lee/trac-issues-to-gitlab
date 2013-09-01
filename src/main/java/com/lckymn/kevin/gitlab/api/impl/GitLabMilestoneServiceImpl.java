@@ -16,28 +16,27 @@
 package com.lckymn.kevin.gitlab.api.impl;
 
 import static com.lckymn.kevin.gitlab.api.GitLabApiUtil.*;
-import static org.elixirian.kommonlee.util.Objects.*;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.elixirian.jsonstatham.core.JsonStatham;
 
-import com.lckymn.kevin.gitlab.api.GitLabProjectService;
-import com.lckymn.kevin.gitlab.json.GitLabProject;
+import com.lckymn.kevin.gitlab.api.GitLabMilestoneService;
+import com.lckymn.kevin.gitlab.json.GitLabMilestone;
 import com.lckymn.kevin.http.HttpRequestForJsonSource;
 
 /**
  * @author Lee, SeongHyun (Kevin)
  * @version 0.0.1 (2013-08-31)
  */
-public class GitLabProjectServiceImpl implements GitLabProjectService
+public class GitLabMilestoneServiceImpl implements GitLabMilestoneService
 {
   private final HttpRequestForJsonSource httpRequestForJsonSource;
   private final JsonStatham jsonStatham;
   private final String url;
 
-  public GitLabProjectServiceImpl(final HttpRequestForJsonSource httpRequestForJsonSource,
+  public GitLabMilestoneServiceImpl(final HttpRequestForJsonSource httpRequestForJsonSource,
       final JsonStatham jsonStatham, final String url)
   {
     this.httpRequestForJsonSource = httpRequestForJsonSource;
@@ -45,28 +44,28 @@ public class GitLabProjectServiceImpl implements GitLabProjectService
     this.url = buildApiUrlForProjects(url);
   }
 
-  @Override
-  public List<GitLabProject> getAllGitLabProjects(final String privateToken)
+  HttpRequestForJsonSource getHttpRequestForJsonSource()
   {
-    final String result = httpRequestForJsonSource.get(prepareUrl(url, privateToken))
+    return httpRequestForJsonSource;
+  }
+
+  JsonStatham getJsonStatham()
+  {
+    return jsonStatham;
+  }
+
+  String getUrl()
+  {
+    return url;
+  }
+
+  @Override
+  public List<GitLabMilestone> getAllGitLabMilestones(final String privateToken, final Long projectId)
+  {
+    final String result = httpRequestForJsonSource.get(prepareUrlForMilestones(url, privateToken, projectId))
         .body();
-
-    final GitLabProject[] gitLabProjects = jsonStatham.convertFromJson(GitLabProject[].class, result);
-    return Arrays.asList(gitLabProjects);
+    final GitLabMilestone[] gitLabMilestones = getResultOrThrowException(jsonStatham, GitLabMilestone[].class, result);
+    return Arrays.asList(gitLabMilestones);
   }
 
-  @Override
-  public GitLabProject getProjectByPathWithNamespace(final String privateToken, final String pathWithNamespace)
-  {
-    final List<GitLabProject> gitLabProjectList = getAllGitLabProjects(privateToken);
-
-    for (final GitLabProject gitLabProject : gitLabProjectList)
-    {
-      if (equal(gitLabProject.pathWithNamespace, pathWithNamespace))
-      {
-        return gitLabProject;
-      }
-    }
-    return GitLabProject.EMPTY_GIT_LAB_PROJECT;
-  }
 }

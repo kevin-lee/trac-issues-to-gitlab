@@ -15,7 +15,14 @@
  */
 package com.lckymn.kevin.gitlab.api;
 
+import static com.lckymn.kevin.gitlab.api.GitLabApiConstants.*;
+
+import org.elixirian.jsonstatham.core.JsonStatham;
+import org.elixirian.jsonstatham.core.convertible.JsonConvertible;
+import org.elixirian.jsonstatham.core.convertible.JsonObject;
 import org.elixirian.kommonlee.util.CommonConstants;
+
+import com.lckymn.kevin.gitlab.api.exception.GitLabMessageException;
 
 /**
  * @author Lee, SeongHyun (Kevin)
@@ -23,19 +30,63 @@ import org.elixirian.kommonlee.util.CommonConstants;
  */
 public final class GitLabApiUtil
 {
-  private static final String PRIVATE_TOKEN = "private_token";
-
   private GitLabApiUtil() throws IllegalAccessException
   {
     throw new IllegalAccessException(getClass().getName() + CommonConstants.CANNOT_BE_INSTANTIATED);
   }
 
-  public static String addPrivateToken(final String url, final String privateToken)
+  public static String prepareUrl(final String url, final String privateToken)
   {
     return new StringBuilder(url).append("?")
         .append(PRIVATE_TOKEN)
         .append("=")
         .append(privateToken)
         .toString();
+  }
+
+  public static String prepareUrl(final String url, final String privateToken, final Object... parameters)
+  {
+    final StringBuilder stringBuilder = new StringBuilder(url);
+    for (final Object parameter : parameters)
+    {
+      stringBuilder.append("/")
+          .append(parameter);
+    }
+    return stringBuilder.append("?")
+        .append(PRIVATE_TOKEN)
+        .append("=")
+        .append(privateToken)
+        .toString();
+  }
+
+  public static String prepareUrlForMilestones(final String url, final String privateToken, final Long projectId)
+  {
+    return prepareUrl(url, privateToken, projectId, MILESTONES);
+  }
+
+  public static String buildApiUrl(final String url)
+  {
+    return url + (url.endsWith("/") ? API_V3 : _API_V3);
+  }
+
+  public static String buildApiUrlForProjects(final String url)
+  {
+    return url + (url.endsWith("/") ? API_V3 : _API_V3) + _PROJECTS;
+  }
+
+  public static <T> T getResultOrThrowException(final JsonStatham jsonStatham, final Class<T> theClass,
+      final String json)
+  {
+    final JsonConvertible jsonConvertible = jsonStatham.convertJsonStringIntoJsonConvertible(json);
+    if (jsonConvertible.isJsonObject())
+    {
+      final JsonObject jsonObject = (JsonObject) jsonConvertible;
+      if (!jsonObject.isNull() && jsonObject.containsName("message"))
+      {
+        final String message = jsonObject.get("message");
+        throw GitLabMessageException.newInstanceByMessage(message);
+      }
+    }
+    return jsonStatham.convertFromJsonConvertible(theClass, jsonConvertible);
   }
 }

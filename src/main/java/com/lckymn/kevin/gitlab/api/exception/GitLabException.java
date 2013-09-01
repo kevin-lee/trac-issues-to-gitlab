@@ -13,33 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lckymn.kevin.util;
-
-import java.text.ParseException;
+package com.lckymn.kevin.gitlab.api.exception;
 
 /**
  * @author Lee, SeongHyun (Kevin)
- * @version 0.0.1 (2013-08-31)
+ * @version 0.0.1 (2013-09-01)
  */
-public class RuntimeParseException extends RuntimeException
+public class GitLabException extends RuntimeException
 {
-  private static final long serialVersionUID = -4983557347192166811L;
+  private static final long serialVersionUID = 6094328692344008154L;
 
-  private int errorOffset;
-
-  public RuntimeParseException(final String message, final int errorOffset)
+  public GitLabException(final String message, final Throwable cause, final boolean enableSuppression,
+      final boolean writableStackTrace)
   {
-    this(message, errorOffset, null);
+    super(message, cause, enableSuppression, writableStackTrace);
   }
 
-  public RuntimeParseException(final String message, final int errorOffset, final ParseException cause)
+  public GitLabException(final String message, final Throwable cause)
   {
     super(message, cause);
-    this.errorOffset = errorOffset;
   }
 
-  public int getErrorOffset()
+  public GitLabException(final String message)
   {
-    return errorOffset;
+    super(message);
+  }
+
+  public GitLabException(final Throwable cause)
+  {
+    super(cause);
   }
 }

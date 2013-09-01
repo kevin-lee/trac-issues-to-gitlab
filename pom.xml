@@ -21,7 +21,7 @@
 		<kommonlee-exception.version>0.0.17-SNAPSHOT</kommonlee-exception.version>
 		<kommonlee-test.version>0.0.17-SNAPSHOT</kommonlee-test.version>
 		<kommonlee-core.version>0.0.36-SNAPSHOT</kommonlee-core.version>
-		<json-statham.version>0.2.46-SNAPSHOT</json-statham.version>
+		<json-statham.version>0.2.47-SNAPSHOT</json-statham.version>
 	</properties>
 
 	<repositories>

@@ -13,19 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lckymn.kevin.trac.rpc;
+package com.lckymn.kevin.http;
 
-import java.net.URL;
+import com.github.kevinsawicki.http.HttpRequest;
 
 /**
  * @author Lee, SeongHyun (Kevin)
- * @version 0.0.1 (2013-08-29)
+ * @version 0.0.1 (2013-09-01)
  */
-public interface TracRpcConfig
+public class HttpRequestForJsonSource implements HttpRequestSource
 {
-  URL getServerUrl();
+  @Override
+  public HttpRequest get(final String url)
+  {
+    return HttpRequest.get(url)
+        .acceptJson();
+  }
 
-  String getBasicUserName();
-
-  String getBasicPassword();
+  @Override
+  public HttpRequest post(final String url)
+  {
+    return HttpRequest.post(url)
+        .acceptJson();
+  }
 }

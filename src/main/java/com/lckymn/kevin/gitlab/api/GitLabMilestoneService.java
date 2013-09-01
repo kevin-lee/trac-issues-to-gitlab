@@ -13,19 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.lckymn.kevin.trac.rpc;
+package com.lckymn.kevin.gitlab.api;
 
-import java.net.URL;
+import java.util.List;
+
+import com.lckymn.kevin.gitlab.json.GitLabMilestone;
 
 /**
  * @author Lee, SeongHyun (Kevin)
- * @version 0.0.1 (2013-08-29)
+ * @version 0.0.1 (2013-08-31)
  */
-public interface TracRpcConfig
+public interface GitLabMilestoneService
 {
-  URL getServerUrl();
-
-  String getBasicUserName();
-
-  String getBasicPassword();
+  List<GitLabMilestone> getAllGitLabMilestones(String privateToken, Long projectId);
 }

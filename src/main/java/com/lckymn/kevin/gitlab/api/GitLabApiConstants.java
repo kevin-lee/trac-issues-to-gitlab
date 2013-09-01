@@ -18,19 +18,13 @@ package com.lckymn.kevin.gitlab.api;
 import org.elixirian.kommonlee.util.CommonConstants;
 
 /**
- * <pre>
- *     ___  _____                                _____
- *    /   \/    /_________  ___ ____ __ ______  /    /   ______  ______
- *   /        / /  ___ \  \/  //___// //     / /    /   /  ___ \/  ___ \
- *  /        \ /  _____/\    //   //   __   / /    /___/  _____/  _____/
- * /____/\____\\_____/   \__//___//___/ /__/ /________/\_____/ \_____/
- * </pre>
- *
  * @author Lee, SeongHyun (Kevin)
  * @version 0.0.1 (2013-09-01)
  */
 public class GitLabApiConstants
 {
+  public static final String SLASH = "/";
+
   /**
    * "api/v3"
    */
@@ -39,12 +33,27 @@ public class GitLabApiConstants
   /**
    * "/api/v3"
    */
-  public static final String _API_V3 = "/api/v3";
+  public static final String _API_V3 = SLASH + API_V3;
 
   /**
    * "/projects"
    */
   public static final String _PROJECTS = "/projects";
+
+  /**
+   * "milestones"
+   */
+  public static final String MILESTONES = "milestones";
+
+  /**
+   * "/milestones"
+   */
+  public static final String _MILESTONES = SLASH + MILESTONES;
+
+  /**
+   * "private_token"
+   */
+  public static final String PRIVATE_TOKEN = "private_token";
 
   private GitLabApiConstants() throws IllegalAccessException
   {

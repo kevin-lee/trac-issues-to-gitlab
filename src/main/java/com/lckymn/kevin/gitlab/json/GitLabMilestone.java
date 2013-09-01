@@ -3,24 +3,16 @@
  */
 package com.lckymn.kevin.gitlab.json;
 
-import java.util.Date;
-
 import static com.lckymn.kevin.util.UtcDateAndTimeFormatUtil.*;
 import static org.elixirian.kommonlee.util.Objects.*;
+
+import java.util.Date;
 
 import org.elixirian.jsonstatham.annotation.Json;
 import org.elixirian.jsonstatham.annotation.JsonField;
 import org.elixirian.jsonstatham.annotation.ValueAccessor;
 
 /**
- * <pre>
- *     ___  _____                                _____
- *    /   \/    /_________  ___ ____ __ ______  /    /   ______  ______
- *   /        / /  ___ \  \/  //___// //     / /    /   /  ___ \/  ___ \
- *  /        \ /  _____/\    //   //   __   / /    /___/  _____/  _____/
- * /____/\____\\_____/   \__//___//___/ /__/ /________/\_____/ \_____/
- * </pre>
- *
  * @author Lee, SeongHyun (Kevin)
  * @version 0.0.1 (2013-09-01)
  */
@@ -61,16 +53,16 @@ public class GitLabMilestone
   @JsonField
   public final String state;
 
-  @ValueAccessor(name = "getUpdatedAtInUtcString")
-  @JsonField(name = "updated_at")
-  public final Date updatedAt;
-
   @ValueAccessor(name = "getCreatedAtInUtcString")
   @JsonField(name = "created_at")
   public final Date createdAt;
 
+  @ValueAccessor(name = "getUpdatedAtInUtcString")
+  @JsonField(name = "updated_at")
+  public final Date updatedAt;
+
   public GitLabMilestone(final Long id, final Long projectId, final String title, final String description,
-      final String dueDate, final String state, final String updatedAt, final String createdAt)
+      final String dueDate, final String state, final String createdAt, final String updatedAt)
   {
     this.id = id;
     this.projectId = projectId;
@@ -78,8 +70,8 @@ public class GitLabMilestone
     this.description = description;
     this.dueDate = parseDateAndTimeIfNeitherNullNorEmpty(dueDate);
     this.state = state;
-    this.updatedAt = parseDateAndTimeIfNeitherNullNorEmpty(updatedAt);
     this.createdAt = parseDateAndTimeIfNeitherNullNorEmpty(createdAt);
+    this.updatedAt = parseDateAndTimeIfNeitherNullNorEmpty(updatedAt);
   }
 
   public String getDueDateInUtcString()
@@ -87,14 +79,14 @@ public class GitLabMilestone
     return formatDateAndTimeIfNotNull(dueDate);
   }
 
-  public String getUpdatedAtInUtcString()
-  {
-    return formatDateAndTimeIfNotNull(updatedAt);
-  }
-
   public String getCreatedAtInUtcString()
   {
     return formatDateAndTimeIfNotNull(createdAt);
+  }
+
+  public String getUpdatedAtInUtcString()
+  {
+    return formatDateAndTimeIfNotNull(updatedAt);
   }
 
   public boolean isEmpty()
@@ -108,6 +100,34 @@ public class GitLabMilestone
   }
 
   @Override
+  public int hashCode()
+  {
+    return hash(id, projectId, title, description, dueDate, state, createdAt, updatedAt);
+  }
+
+  @Override
+  public boolean equals(final Object gitLabMilestone)
+  {
+    if (this == gitLabMilestone)
+    {
+      return true;
+    }
+    final GitLabMilestone that = castIfInstanceOf(GitLabMilestone.class, gitLabMilestone);
+
+    /* @formatter:off */
+    return null != that &&
+            (equal(id, that.id) &&
+             equal(projectId, that.projectId) &&
+             equal(title, that.title) &&
+             equal(description, that.description) &&
+             equal(dueDate, that.dueDate) &&
+             equal(state, that.state) &&
+             equal(createdAt, that.createdAt) &&
+             equal(updatedAt, that.updatedAt));
+    /* @formatter:on */
+  }
+
+  @Override
   public String toString()
   {
     /* @formatter:off */
@@ -118,8 +138,8 @@ public class GitLabMilestone
             .add("description", description)
             .add("dueDate", dueDate)
             .add("state", state)
-            .add("updatedAt", updatedAt)
             .add("createdAt", createdAt)
+            .add("updatedAt", updatedAt)
           .toString();
     /* @formatter:on */
   }

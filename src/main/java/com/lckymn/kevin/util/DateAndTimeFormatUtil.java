@@ -28,17 +28,20 @@ import org.elixirian.kommonlee.util.CommonConstants;
  * @author Lee, SeongHyun (Kevin)
  * @version 0.0.1 (2013-08-31)
  */
-public final class UtcDateAndTimeFormatUtil
+public final class DateAndTimeFormatUtil
 {
-  public static final String UTC_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
+  public static final String ISO8601_DATE_FORMAT_PATTERN = "yyyy-MM-dd";
+
+  public static final String UTC_FORMAT = ISO8601_DATE_FORMAT_PATTERN + "'T'HH:mm:ssZ";
+
   public static final String UTC = "UTC";
 
-  private UtcDateAndTimeFormatUtil() throws IllegalAccessException
+  private DateAndTimeFormatUtil() throws IllegalAccessException
   {
     throw new IllegalAccessException(getClass().getName() + CommonConstants.CANNOT_BE_INSTANTIATED);
   }
 
-  public static Date parseDateAndTimeIfNeitherNullNorEmpty(final String dateAndTime)
+  public static Date parseUtcDateAndTimeIfNeitherNullNorEmpty(final String dateAndTime)
   {
     if (isNullOrEmptyString(dateAndTime))
     {
@@ -56,7 +59,7 @@ public final class UtcDateAndTimeFormatUtil
     }
   }
 
-  public static String formatDateAndTimeIfNotNull(final Date dateAndTime)
+  public static String formatUtcDateAndTimeIfNotNull(final Date dateAndTime)
   {
     if (null == dateAndTime)
     {
@@ -67,5 +70,36 @@ public final class UtcDateAndTimeFormatUtil
     String formattedDateAndTime;
     formattedDateAndTime = dateFormat.format(dateAndTime);
     return formattedDateAndTime.replace("+0000", "Z");
+  }
+
+  public static Date parseUtcDateIfNeitherNullNorEmpty(final String dateString)
+  {
+    if (isNullOrEmptyString(dateString))
+    {
+      return null;
+    }
+    final SimpleDateFormat dateFormat = new SimpleDateFormat(ISO8601_DATE_FORMAT_PATTERN);
+    dateFormat.setTimeZone(TimeZone.getTimeZone(UTC));
+    try
+    {
+      return dateFormat.parse(dateString);
+    }
+    catch (final ParseException e)
+    {
+      throw new RuntimeParseException(e.getMessage(), e.getErrorOffset(), e);
+    }
+  }
+
+  public static String formatUtcDateIfNotNull(final Date date)
+  {
+    if (null == date)
+    {
+      return null;
+    }
+    final SimpleDateFormat dateFormat = new SimpleDateFormat(ISO8601_DATE_FORMAT_PATTERN);
+    dateFormat.setTimeZone(TimeZone.getTimeZone(UTC));
+    String formattedDate;
+    formattedDate = dateFormat.format(date);
+    return formattedDate;
   }
 }

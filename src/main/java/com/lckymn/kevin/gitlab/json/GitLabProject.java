@@ -23,7 +23,7 @@ import org.elixirian.jsonstatham.annotation.Json;
 import org.elixirian.jsonstatham.annotation.JsonField;
 import org.elixirian.jsonstatham.annotation.ValueAccessor;
 
-import com.lckymn.kevin.util.UtcDateAndTimeFormatUtil;
+import com.lckymn.kevin.util.DateAndTimeFormatUtil;
 
 /**
  * @author Lee, SeongHyun (Kevin)
@@ -76,12 +76,12 @@ public class GitLabProject
       this.email = email;
       this.name = name;
       this.state = state;
-      this.createdAt = UtcDateAndTimeFormatUtil.parseDateAndTimeIfNeitherNullNorEmpty(createdAt);
+      this.createdAt = DateAndTimeFormatUtil.parseUtcDateAndTimeIfNeitherNullNorEmpty(createdAt);
     }
 
     public String getCreatedAt()
     {
-      return UtcDateAndTimeFormatUtil.formatDateAndTimeIfNotNull(createdAt);
+      return DateAndTimeFormatUtil.formatUtcDateAndTimeIfNotNull(createdAt);
     }
 
     public boolean isEmpty()
@@ -155,21 +155,21 @@ public class GitLabProject
     {
       this.id = id;
       this.name = name;
-      this.createdAt = UtcDateAndTimeFormatUtil.parseDateAndTimeIfNeitherNullNorEmpty(createdAt);
+      this.createdAt = DateAndTimeFormatUtil.parseUtcDateAndTimeIfNeitherNullNorEmpty(createdAt);
       this.description = description;
       this.ownerId = ownerId;
       this.path = path;
-      this.updatedAt = UtcDateAndTimeFormatUtil.parseDateAndTimeIfNeitherNullNorEmpty(updatedAt);
+      this.updatedAt = DateAndTimeFormatUtil.parseUtcDateAndTimeIfNeitherNullNorEmpty(updatedAt);
     }
 
     public String getCreatedAtInUtcString()
     {
-      return UtcDateAndTimeFormatUtil.formatDateAndTimeIfNotNull(createdAt);
+      return DateAndTimeFormatUtil.formatUtcDateAndTimeIfNotNull(createdAt);
     }
 
     public String getUpdatedAtInUtcString()
     {
-      return UtcDateAndTimeFormatUtil.formatDateAndTimeIfNotNull(updatedAt);
+      return DateAndTimeFormatUtil.formatUtcDateAndTimeIfNotNull(updatedAt);
     }
 
     public boolean isEmpty()
@@ -300,19 +300,19 @@ public class GitLabProject
     this.wallEnabled = wallEnabled;
     this.wikiEnabled = wikiEnabled;
     this.snippetsEnabled = snippetsEnabled;
-    this.createdAt = UtcDateAndTimeFormatUtil.parseDateAndTimeIfNeitherNullNorEmpty(createdAt);
-    this.lastActivityAt = UtcDateAndTimeFormatUtil.parseDateAndTimeIfNeitherNullNorEmpty(lastActivityAt);
+    this.createdAt = DateAndTimeFormatUtil.parseUtcDateAndTimeIfNeitherNullNorEmpty(createdAt);
+    this.lastActivityAt = DateAndTimeFormatUtil.parseUtcDateAndTimeIfNeitherNullNorEmpty(lastActivityAt);
     this.namespace = namespace;
   }
 
   public String getCreatedAtInUtcString()
   {
-    return UtcDateAndTimeFormatUtil.formatDateAndTimeIfNotNull(createdAt);
+    return DateAndTimeFormatUtil.formatUtcDateAndTimeIfNotNull(createdAt);
   }
 
   public String getLastActivityAtInUtcString()
   {
-    return UtcDateAndTimeFormatUtil.formatDateAndTimeIfNotNull(lastActivityAt);
+    return DateAndTimeFormatUtil.formatUtcDateAndTimeIfNotNull(lastActivityAt);
   }
 
   public boolean isEmpty()

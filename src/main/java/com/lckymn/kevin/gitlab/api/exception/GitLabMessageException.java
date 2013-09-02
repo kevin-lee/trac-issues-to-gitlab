@@ -49,15 +49,38 @@ public class GitLabMessageException extends GitLabException
     final String[] values = message.split("[\\s]+");
     if (0 != values.length)
     {
-      final int code = Integer.parseInt(values[0]);
+      final int code;
+      try
+      {
+        code = Integer.parseInt(values[0]);
+      }
+      catch (final NumberFormatException e)
+      {
+        return new GitLabMessageException(message);
+      }
       final GitLabMessageException gitLabMessageException;
       switch (code)
       {
+        case 400:
+          gitLabMessageException = new GitLab400BadRequestMessageException(message);
+          break;
         case 401:
           gitLabMessageException = new GitLab401UnauthorizedMessageException(message);
           break;
+        case 403:
+          gitLabMessageException = new GitLab403ForbiddenMessageException(message);
+          break;
         case 404:
           gitLabMessageException = new GitLab404NotFoundMessageException(message);
+          break;
+        case 405:
+          gitLabMessageException = new GitLab405MethodNotAllowedMessageException(message);
+          break;
+        case 409:
+          gitLabMessageException = new GitLab409ConflictMessageException(message);
+          break;
+        case 500:
+          gitLabMessageException = new GitLab500ServerErrorMessageException(message);
           break;
         default:
           gitLabMessageException = new GitLabMessageException(message);

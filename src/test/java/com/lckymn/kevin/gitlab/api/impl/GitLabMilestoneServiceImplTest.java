@@ -5,23 +5,31 @@ package com.lckymn.kevin.gitlab.api.impl;
 
 import static com.lckymn.kevin.gitlab.api.GitLabApiUtil.*;
 import static org.elixirian.kommonlee.util.collect.Lists.*;
+import static org.elixirian.kommonlee.util.collect.Maps.*;
 import static org.fest.assertions.api.Assertions.*;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
 import java.util.List;
+import java.util.Map;
 
 import org.elixirian.jsonstatham.core.JsonStatham;
 import org.elixirian.jsonstatham.core.reflect.ReflectionJsonStathams;
+import org.elixirian.kommonlee.test.CauseCheckableExpectedException;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.InOrder;
 
 import com.github.kevinsawicki.http.HttpRequest;
 import com.lckymn.kevin.gitlab.api.GitLabMilestoneService;
+import com.lckymn.kevin.gitlab.api.exception.GitLab404NotFoundMessageException;
 import com.lckymn.kevin.gitlab.json.GitLabMilestone;
 import com.lckymn.kevin.http.HttpRequestForJsonSource;
+import com.lckymn.kevin.util.DateAndTimeFormatUtil;
 
 /**
  * @author Lee, SeongHyun (Kevin)
@@ -29,6 +37,9 @@ import com.lckymn.kevin.http.HttpRequestForJsonSource;
  */
 public class GitLabMilestoneServiceImplTest
 {
+  @Rule
+  public CauseCheckableExpectedException causeCheckableExpectedException = CauseCheckableExpectedException.none();
+
   private JsonStatham jsonStatham;
 
   /**
@@ -65,7 +76,7 @@ public class GitLabMilestoneServiceImplTest
   }
 
   @Test
-  public final void testGitLabMilestoneServiceImpl() throws Exception
+  public final void testGitLabMilestoneServiceImpl()
   {
     /* given */
     final HttpRequestForJsonSource expectedHttpRequestForJsonSource = mock(HttpRequestForJsonSource.class);
@@ -84,10 +95,11 @@ public class GitLabMilestoneServiceImplTest
   }
 
   @Test
-  public final void testGetAllGitLabMilestones() throws Exception
+  public final void testGetAllGitLabMilestones()
   {
     /* given */
     final String url = "http://localhost/gitlab";
+    final String privateToken = "testPrivateToken";
     final Long id1 = 1L;
     final Long projectId1 = 1L;
     final String title1 = "test title 1";
@@ -112,7 +124,6 @@ public class GitLabMilestoneServiceImplTest
           "{\"id\":" + id2 + ",\"project_id\":" + projectId1 + ",\"title\":\"" + title2 + "\",\"description\":\""
           + description2 + "\",\"due_date\":" + dueDate2 + ",\"state\":\"" + state2 + "\",\"updated_at\":\""
           + updatedAt2 + "\",\"created_at\":\"" + createdAt2 + "\"}" + "]";
-    final String privateToken = "testPrivateToken";
 
     final List<GitLabMilestone> expected = newArrayList();
     expected.add(new GitLabMilestone(id1, projectId1, title1, description1, dueDate1, state1, createdAt1, updatedAt1));
@@ -133,7 +144,96 @@ public class GitLabMilestoneServiceImplTest
 
     /* then */
     assertThat(actual).isEqualTo(expected);
-    verify(httpRequestForJsonSource, times(1)).get(apiUrl);
+    final InOrder inOrder = inOrder(httpRequestForJsonSource, httpRequest);
+    inOrder.verify(httpRequestForJsonSource, times(1))
+        .get(apiUrl);
+    inOrder.verify(httpRequest, times(1))
+        .body();
   }
 
+  @Test
+  public final void testGetAllGitLabMilestonesWithNotExistingProjectId()
+  {
+    /* given */
+    final String url = "http://localhost/gitlab";
+    final String privateToken = "testPrivateToken";
+    final Long projectId1 = 1L;
+
+    final HttpRequest httpRequest = mock(HttpRequest.class);
+    when(httpRequest.body()).thenReturn("{\"message\":\"404 Not Found\"}");
+
+    final HttpRequestForJsonSource httpRequestForJsonSource = mock(HttpRequestForJsonSource.class);
+
+    when(httpRequestForJsonSource.get(anyString())).thenReturn(httpRequest);
+
+    final GitLabMilestoneService gitLabMilestoneService =
+      new GitLabMilestoneServiceImpl(httpRequestForJsonSource, jsonStatham, url);
+
+    /* expected */
+    causeCheckableExpectedException.expect(GitLab404NotFoundMessageException.class);
+
+    /* when */
+    final List<GitLabMilestone> actual = gitLabMilestoneService.getAllGitLabMilestones(privateToken, projectId1);
+
+    /* otherwise-fail */
+    fail("GitLab404NotFoundMessageException was not thrown for the projectId which does not exist.\n" + "actual: "
+        + actual);
+  }
+
+  @Test
+  public final void testCreateMilestone()
+  {
+    /* given */
+    final String url = "http://localhost/gitlab";
+    final String privateToken = "testPrivateToken";
+    final Long id1 = 1L;
+    final Long projectId1 = 1L;
+    final String title = "test title 1";
+    final String description = "some description";
+    final String dueDate = "2013-12-01";
+    final String state1 = "active";
+    final String createdAt1 = "2013-08-25T11:25:35Z";
+    final String updatedAt1 = "2013-08-25T11:55:12Z";
+
+    final String json =
+      "{\"id\":" + id1 + ",\"project_id\":" + projectId1 + ",\"title\":\"" + title + "\",\"description\":\""
+          + description + "\",\"due_date\":\"" + dueDate + "\",\"state\":\"" + state1 + "\",\"updated_at\":\""
+          + updatedAt1 + "\",\"created_at\":\"" + createdAt1 + "\"}";
+
+    final GitLabMilestone expected =
+      new GitLabMilestone(id1, projectId1, title, description, dueDate, state1, createdAt1, updatedAt1);
+
+    final Map<String, String> form = newHashMap();
+    form.put("title", title);
+    form.put("description", description);
+    form.put("due_date", dueDate);
+
+    final HttpRequest httpRequest = mock(HttpRequest.class);
+    when(httpRequest.form(form)).thenReturn(httpRequest);
+    when(httpRequest.body()).thenReturn(json);
+
+    final HttpRequestForJsonSource httpRequestForJsonSource = mock(HttpRequestForJsonSource.class);
+
+    final String apiUrl = prepareUrlForMilestones(buildApiUrlForProjects(url), privateToken, projectId1);
+    when(httpRequestForJsonSource.post(apiUrl)).thenReturn(httpRequest);
+
+    final GitLabMilestoneService gitLabMilestoneService =
+      new GitLabMilestoneServiceImpl(httpRequestForJsonSource, jsonStatham, url);
+
+    /* when */
+    final GitLabMilestone actual =
+      gitLabMilestoneService.createMilestone(privateToken, projectId1, title, description,
+          DateAndTimeFormatUtil.parseUtcDateIfNeitherNullNorEmpty(dueDate));
+
+    /* then */
+    assertThat(actual).isEqualTo(expected);
+
+    final InOrder inOrder = inOrder(httpRequestForJsonSource, httpRequest);
+    inOrder.verify(httpRequestForJsonSource, times(1))
+        .post(apiUrl);
+    inOrder.verify(httpRequest, times(1))
+        .form(form);
+    inOrder.verify(httpRequest, times(1))
+        .body();
+  }
 }

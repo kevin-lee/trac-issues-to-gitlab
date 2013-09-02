@@ -16,15 +16,19 @@
 package com.lckymn.kevin.gitlab.api.impl;
 
 import static com.lckymn.kevin.gitlab.api.GitLabApiUtil.*;
+import static org.elixirian.kommonlee.util.collect.Maps.*;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.elixirian.jsonstatham.core.JsonStatham;
 
 import com.lckymn.kevin.gitlab.api.GitLabMilestoneService;
 import com.lckymn.kevin.gitlab.json.GitLabMilestone;
 import com.lckymn.kevin.http.HttpRequestForJsonSource;
+import com.lckymn.kevin.util.DateAndTimeFormatUtil;
 
 /**
  * @author Lee, SeongHyun (Kevin)
@@ -66,6 +70,21 @@ public class GitLabMilestoneServiceImpl implements GitLabMilestoneService
         .body();
     final GitLabMilestone[] gitLabMilestones = getResultOrThrowException(jsonStatham, GitLabMilestone[].class, result);
     return Arrays.asList(gitLabMilestones);
+  }
+
+  @Override
+  public GitLabMilestone createMilestone(final String privateToken, final Long projectId, final String title,
+      final String description, final Date dueDate)
+  {
+    final Map<String, String> form = newHashMap();
+    form.put("title", title);
+    form.put("description", description);
+    form.put("due_date", DateAndTimeFormatUtil.formatUtcDateIfNotNull(dueDate));
+    final String result = httpRequestForJsonSource.post(prepareUrlForMilestones(url, privateToken, projectId))
+        .form(form)
+        .body();
+    final GitLabMilestone gitLabMilestone = getResultOrThrowException(jsonStatham, GitLabMilestone.class, result);
+    return gitLabMilestone;
   }
 
 }

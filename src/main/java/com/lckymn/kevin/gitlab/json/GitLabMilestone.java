@@ -3,7 +3,7 @@
  */
 package com.lckymn.kevin.gitlab.json;
 
-import static com.lckymn.kevin.util.UtcDateAndTimeFormatUtil.*;
+import static com.lckymn.kevin.util.DateAndTimeFormatUtil.*;
 import static org.elixirian.kommonlee.util.Objects.*;
 
 import java.util.Date;
@@ -68,25 +68,25 @@ public class GitLabMilestone
     this.projectId = projectId;
     this.title = title;
     this.description = description;
-    this.dueDate = parseDateAndTimeIfNeitherNullNorEmpty(dueDate);
+    this.dueDate = parseUtcDateIfNeitherNullNorEmpty(dueDate);
     this.state = state;
-    this.createdAt = parseDateAndTimeIfNeitherNullNorEmpty(createdAt);
-    this.updatedAt = parseDateAndTimeIfNeitherNullNorEmpty(updatedAt);
+    this.createdAt = parseUtcDateAndTimeIfNeitherNullNorEmpty(createdAt);
+    this.updatedAt = parseUtcDateAndTimeIfNeitherNullNorEmpty(updatedAt);
   }
 
   public String getDueDateInUtcString()
   {
-    return formatDateAndTimeIfNotNull(dueDate);
+    return formatUtcDateIfNotNull(dueDate);
   }
 
   public String getCreatedAtInUtcString()
   {
-    return formatDateAndTimeIfNotNull(createdAt);
+    return formatUtcDateAndTimeIfNotNull(createdAt);
   }
 
   public String getUpdatedAtInUtcString()
   {
-    return formatDateAndTimeIfNotNull(updatedAt);
+    return formatUtcDateAndTimeIfNotNull(updatedAt);
   }
 
   public boolean isEmpty()

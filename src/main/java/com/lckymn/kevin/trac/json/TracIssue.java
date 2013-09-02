@@ -26,6 +26,9 @@ import java.util.Map;
 
 import org.elixirian.jsonstatham.annotation.Json;
 import org.elixirian.jsonstatham.annotation.JsonField;
+import org.elixirian.jsonstatham.annotation.ValueAccessor;
+
+import com.lckymn.kevin.util.DateAndTimeFormatUtil;
 
 /**
  * @author Lee, SeongHyun (Kevin)
@@ -43,6 +46,9 @@ public class TracIssue
   @JsonField
   private final List<String> keywords;
 
+  /**
+   * "accepted", "assigned", "closed", "new", "reopened"
+   */
   @JsonField
   private final String status;
 
@@ -61,6 +67,7 @@ public class TracIssue
   @JsonField
   private final String reporter;
 
+  @ValueAccessor(name = "getTimeInUtcString")
   @JsonField
   private final Date time;
 
@@ -79,6 +86,7 @@ public class TracIssue
   @JsonField
   private final String owner;
 
+  @ValueAccessor(name = "getChangetimeInUtcString")
   @JsonField
   private final Date changetime;
 
@@ -159,6 +167,11 @@ public class TracIssue
     return time;
   }
 
+  public String getTimeInUtcString()
+  {
+    return DateAndTimeFormatUtil.formatUtcDateAndTimeIfNotNull(time);
+  }
+
   public String getComponent()
   {
     return component;
@@ -189,9 +202,51 @@ public class TracIssue
     return changetime;
   }
 
+  public String getChangetimeInUtcString()
+  {
+    return DateAndTimeFormatUtil.formatUtcDateAndTimeIfNotNull(changetime);
+  }
+
   public List<String> getCc()
   {
     return cc;
+  }
+
+  @Override
+  public int hashCode()
+  {
+    return hash(id, summary, keywords, status, resolution, type, version, milestone, reporter, time, component,
+        description, priority, severity, owner, changetime, cc);
+  }
+
+  @Override
+  public boolean equals(final Object tracIssue)
+  {
+    if (this == tracIssue)
+    {
+      return true;
+    }
+    final TracIssue that = castIfInstanceOf(TracIssue.class, tracIssue);
+    /* @formatter:off */
+    return null != that &&
+            (equal(this.id,           that.id) &&
+             equal(this.summary,      that.summary) &&
+             equal(this.keywords,     that.keywords) &&
+             equal(this.status,       that.status) &&
+             equal(this.resolution,   that.resolution) &&
+             equal(this.type,         that.type) &&
+             equal(this.version,      that.version) &&
+             equal(this.milestone,    that.milestone) &&
+             equal(this.reporter,     that.reporter) &&
+             equal(this.time,         that.time) &&
+             equal(this.component,    that.component) &&
+             equal(this.description,  that.description) &&
+             equal(this.priority,     that.priority) &&
+             equal(this.severity,     that.severity) &&
+             equal(this.owner,        that.owner) &&
+             equal(this.changetime,   that.changetime) &&
+             equal(this.cc,           that.cc));
+    /* @formatter:on */
   }
 
   @Override

@@ -20,6 +20,7 @@ import static org.elixirian.kommonlee.util.collect.Lists.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
@@ -38,15 +39,14 @@ public class TracXmlRpcService implements TracRpcService
 {
   private final XmlRpcClient xmlRpcClient;
 
-  public TracXmlRpcService(final TracRpcConfig tracRpcConfig)
+  public TracXmlRpcService(final XmlRpcClient xmlRpcClient)
   {
-    final XmlRpcClientConfigImpl xmlRpcClientConfig = new XmlRpcClientConfigImpl();
-    xmlRpcClientConfig.setServerURL(tracRpcConfig.getServerUrl());
-    xmlRpcClientConfig.setBasicUserName(tracRpcConfig.getBasicUserName());
-    xmlRpcClientConfig.setBasicPassword(tracRpcConfig.getBasicPassword());
-    final XmlRpcClient xmlRpcClient = new XmlRpcClient();
-    xmlRpcClient.setConfig(xmlRpcClientConfig);
     this.xmlRpcClient = xmlRpcClient;
+  }
+
+  XmlRpcClient getXmlRpcClient()
+  {
+    return xmlRpcClient;
   }
 
   @Override
@@ -91,5 +91,17 @@ public class TracXmlRpcService implements TracRpcService
       throw new RuntimeXmlRpcException(e);
     }
     return resultList;
+  }
+
+  public static TracXmlRpcService newInstance(final TracRpcConfig tracRpcConfig)
+  {
+    final XmlRpcClientConfigImpl xmlRpcClientConfig = new XmlRpcClientConfigImpl();
+    xmlRpcClientConfig.setServerURL(tracRpcConfig.getServerUrl());
+    xmlRpcClientConfig.setBasicUserName(tracRpcConfig.getBasicUserName());
+    xmlRpcClientConfig.setBasicPassword(tracRpcConfig.getBasicPassword());
+    xmlRpcClientConfig.setTimeZone(TimeZone.getTimeZone("UTC"));
+    final XmlRpcClient xmlRpcClient = new XmlRpcClient();
+    xmlRpcClient.setConfig(xmlRpcClientConfig);
+    return new TracXmlRpcService(xmlRpcClient);
   }
 }

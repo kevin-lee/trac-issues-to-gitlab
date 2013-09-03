@@ -22,6 +22,7 @@ import static org.fest.assertions.api.Assertions.*;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -40,6 +41,7 @@ import com.github.kevinsawicki.http.HttpRequest;
 import com.lckymn.kevin.gitlab.api.GitLabMilestoneService;
 import com.lckymn.kevin.gitlab.api.exception.GitLab404NotFoundMessageException;
 import com.lckymn.kevin.gitlab.json.GitLabMilestone;
+import com.lckymn.kevin.gitlab.json.GitLabMilestone.GitLabMilestoneForCreation;
 import com.lckymn.kevin.http.HttpRequestForJsonSource;
 import com.lckymn.kevin.util.DateAndTimeFormatUtil;
 
@@ -234,8 +236,8 @@ public class GitLabMilestoneServiceImplTest
 
     /* when */
     final GitLabMilestone actual =
-      gitLabMilestoneService.createMilestone(privateToken, projectId1, title, description,
-          DateAndTimeFormatUtil.parseUtcDateIfNeitherNullNorEmpty(dueDate));
+      gitLabMilestoneService.createMilestone(privateToken, projectId1, new GitLabMilestoneForCreation(title,
+          description, DateAndTimeFormatUtil.parseUtcDateIfNeitherNullNorEmpty(dueDate)));
 
     /* then */
     assertThat(actual).isEqualTo(expected);
@@ -246,6 +248,98 @@ public class GitLabMilestoneServiceImplTest
     inOrder.verify(httpRequest, times(1))
         .form(form);
     inOrder.verify(httpRequest, times(1))
+        .body();
+  }
+
+  @Test
+  public final void testCreateMilestonesIfNotExist()
+  {
+    /* given */
+    final String url = "http://localhost/gitlab";
+    final String privateToken = "testPrivateToken";
+    final Long id1 = 1L;
+    final Long projectId = 1L;
+    final String title1 = "test title 1";
+    final String description1 = "some description";
+    final String dueDate1 = "2013-12-01";
+    final String state1 = "active";
+    final String createdAt1 = "2013-08-25T11:25:35Z";
+    final String updatedAt1 = "2013-08-25T11:55:12Z";
+
+    final Long id2 = 2L;
+    final String title2 = "title 2";
+    final String description2 = "another description";
+    final String dueDate2 = null;
+    final String state2 = "active";
+    final String createdAt2 = "2013-09-03T11:51:00Z";
+    final String updatedAt2 = "2013-09-03T11:51:00Z";
+
+    final Long id3 = 3L;
+    final String title3 = "M 3";
+    final String description3 = "The 3rd description";
+    final String dueDate3 = null;
+    final String state3 = "active";
+    final String createdAt3 = "2013-09-03T11:55:00Z";
+    final String updatedAt3 = "2013-09-03T11:55:00Z";
+
+    final String json =
+      "[{\"id\":" + id1 + ",\"project_id\":" + projectId + ",\"title\":\"" + title1 + "\",\"description\":\""
+          + description1 + "\",\"due_date\":\"" + dueDate1 + "\",\"state\":\"" + state1 + "\",\"updated_at\":\""
+          + updatedAt1 + "\",\"created_at\":\"" + createdAt1 + "\"}," + "{\"id\":" + id2 + ",\"project_id\":"
+          + projectId + ",\"title\":\"" + title2 + "\",\"description\":\"" + description2 + "\",\"due_date\":"
+          + dueDate2 + ",\"state\":\"" + state2 + "\",\"updated_at\":\"" + updatedAt2 + "\",\"created_at\":\""
+          + createdAt2 + "\"}]";
+
+    final String json2 =
+      "{\"id\":" + id3 + ",\"project_id\":" + projectId + ",\"title\":\"" + title3 + "\",\"description\":\""
+          + description3 + "\",\"due_date\":" + dueDate3 + ",\"state\":\"" + state3 + "\",\"updated_at\":\""
+          + updatedAt3 + "\",\"created_at\":\"" + createdAt3 + "\"}";
+
+    final List<GitLabMilestone> expected =
+      Arrays.asList(new GitLabMilestone(id3, projectId, title3, description3, dueDate3, state3, createdAt3, updatedAt3));
+
+    final Map<String, String> form = newHashMap();
+    form.put("title", title3);
+    form.put("description", description3);
+    form.put("due_date", dueDate3);
+
+    final HttpRequest httpRequestToGet = mock(HttpRequest.class);
+    when(httpRequestToGet.body()).thenReturn(json);
+
+    final HttpRequest httpRequestToPost = mock(HttpRequest.class);
+    when(httpRequestToPost.form(form)).thenReturn(httpRequestToPost);
+    when(httpRequestToPost.body()).thenReturn(json2);
+
+    final HttpRequestForJsonSource httpRequestForJsonSource = mock(HttpRequestForJsonSource.class);
+
+    final String apiUrl = prepareUrlForMilestones(buildApiUrlForProjects(url), privateToken, projectId);
+    when(httpRequestForJsonSource.get(apiUrl)).thenReturn(httpRequestToGet);
+    when(httpRequestForJsonSource.post(apiUrl)).thenReturn(httpRequestToPost);
+
+    final GitLabMilestoneService gitLabMilestoneService =
+      new GitLabMilestoneServiceImpl(httpRequestForJsonSource, jsonStatham, url);
+
+    final List<GitLabMilestoneForCreation> list = newArrayList();
+    list.add(new GitLabMilestoneForCreation(title3, description3,
+        DateAndTimeFormatUtil.parseUtcDateIfNeitherNullNorEmpty(dueDate3)));
+
+    /* when */
+    final List<GitLabMilestone> actual =
+      gitLabMilestoneService.createMilestonesIfNotExist(privateToken, projectId, list);
+
+    /* then */
+    assertThat(actual).isEqualTo(expected);
+
+    final InOrder inOrder = inOrder(httpRequestForJsonSource, httpRequestToGet, httpRequestToPost);
+    inOrder.verify(httpRequestForJsonSource, times(1))
+        .get(apiUrl);
+    inOrder.verify(httpRequestToGet, times(1))
+        .body();
+    inOrder.verify(httpRequestForJsonSource, times(1))
+        .post(apiUrl);
+    inOrder.verify(httpRequestToPost, times(1))
+        .form(form);
+    inOrder.verify(httpRequestToPost, times(1))
         .body();
   }
 }

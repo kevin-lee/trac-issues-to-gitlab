@@ -16,19 +16,22 @@
 package com.lckymn.kevin.gitlab.api.impl;
 
 import static com.lckymn.kevin.gitlab.api.GitLabApiUtil.*;
+import static org.elixirian.kommonlee.util.collect.Lists.*;
 import static org.elixirian.kommonlee.util.collect.Maps.*;
+import static org.elixirian.kommonlee.util.collect.Sets.*;
 
 import java.util.Arrays;
-import java.util.Date;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.elixirian.jsonstatham.core.JsonStatham;
 
 import com.lckymn.kevin.gitlab.api.GitLabMilestoneService;
 import com.lckymn.kevin.gitlab.json.GitLabMilestone;
+import com.lckymn.kevin.gitlab.json.GitLabMilestone.GitLabMilestoneForCreation;
 import com.lckymn.kevin.http.HttpRequestForJsonSource;
-import com.lckymn.kevin.util.DateAndTimeFormatUtil;
 
 /**
  * @author Lee, SeongHyun (Kevin)
@@ -73,13 +76,13 @@ public class GitLabMilestoneServiceImpl implements GitLabMilestoneService
   }
 
   @Override
-  public GitLabMilestone createMilestone(final String privateToken, final Long projectId, final String title,
-      final String description, final Date dueDate)
+  public GitLabMilestone createMilestone(final String privateToken, final Long projectId,
+      final GitLabMilestoneForCreation gitLabMilestoneForCreation)
   {
-    final Map<String, String> form = newHashMap();
-    form.put("title", title);
-    form.put("description", description);
-    form.put("due_date", DateAndTimeFormatUtil.formatUtcDateIfNotNull(dueDate));
+    final Map<String, String> form = newHashMapWithInitialCapacity(3);
+    form.put("title", gitLabMilestoneForCreation.title);
+    form.put("description", gitLabMilestoneForCreation.description);
+    form.put("due_date", gitLabMilestoneForCreation.getDueDateInUtcString());
     final String result = httpRequestForJsonSource.post(prepareUrlForMilestones(url, privateToken, projectId))
         .form(form)
         .body();
@@ -87,4 +90,57 @@ public class GitLabMilestoneServiceImpl implements GitLabMilestoneService
     return gitLabMilestone;
   }
 
+  @Override
+  public List<GitLabMilestone> createMilestonesIfNotExist(final String privateToken, final Long projectId,
+      final List<GitLabMilestoneForCreation> gitLabMilestoneForCreationList)
+  {
+    final Set<GitLabMilestoneForCreation> gitLabMilestoneForCreationListWithUniqueTitle = newHashSet();
+    for (final GitLabMilestoneForCreation gitLabMilestoneForCreation : gitLabMilestoneForCreationList)
+    {
+      boolean duplicateFound = false;
+      for (final GitLabMilestoneForCreation uniqueGitLabMilestoneForCreation : gitLabMilestoneForCreationListWithUniqueTitle)
+      {
+        if (gitLabMilestoneForCreation.title.equalsIgnoreCase(uniqueGitLabMilestoneForCreation.title))
+        {
+          duplicateFound = true;
+          break;
+        }
+      }
+      if (!duplicateFound)
+      {
+        gitLabMilestoneForCreationListWithUniqueTitle.add(gitLabMilestoneForCreation);
+      }
+    }
+
+    final List<GitLabMilestoneForCreation> gitLabMilestoneToAdd = newArrayList();
+    final List<GitLabMilestone> gitLabMilestones = getAllGitLabMilestones(privateToken, projectId);
+    for (final GitLabMilestoneForCreation gitLabMilestoneForCreation : gitLabMilestoneForCreationListWithUniqueTitle)
+    {
+      boolean titleFound = false;
+      for (final GitLabMilestone gitLabMilestone : gitLabMilestones)
+      {
+        if (gitLabMilestoneForCreation.title.equalsIgnoreCase(gitLabMilestone.title))
+        {
+          titleFound = true;
+          break;
+        }
+      }
+      if (!titleFound)
+      {
+        gitLabMilestoneToAdd.add(gitLabMilestoneForCreation);
+      }
+    }
+
+    final int size = gitLabMilestoneToAdd.size();
+    if (0 == size)
+    {
+      return Collections.emptyList();
+    }
+    final List<GitLabMilestone> addedGitLabMilestoneList = newArrayListWithInitialCapacity(size);
+    for (final GitLabMilestoneForCreation gitLabMilestoneForCreation : gitLabMilestoneToAdd)
+    {
+      addedGitLabMilestoneList.add(createMilestone(privateToken, projectId, gitLabMilestoneForCreation));
+    }
+    return Collections.unmodifiableList(addedGitLabMilestoneList);
+  }
 }

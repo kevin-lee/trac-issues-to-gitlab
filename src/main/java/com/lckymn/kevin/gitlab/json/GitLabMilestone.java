@@ -19,6 +19,31 @@ import org.elixirian.jsonstatham.annotation.ValueAccessor;
 @Json
 public class GitLabMilestone
 {
+  public static class GitLabMilestoneForCreation
+  {
+    @JsonField
+    public final String title;
+
+    @JsonField
+    public final String description;
+
+    @ValueAccessor(name = "getDueDateInUtcString")
+    @JsonField(name = "due_date")
+    private final Date dueDate;
+
+    public GitLabMilestoneForCreation(final String title, final String description, final Date dueDate)
+    {
+      this.title = title;
+      this.description = description;
+      this.dueDate = dueDate;
+    }
+
+    public String getDueDateInUtcString()
+    {
+      return formatUtcDateIfNotNull(dueDate);
+    }
+  }
+
   public static final GitLabMilestone EMPTY_GIT_LAB_MILESTONE = new GitLabMilestone(null, null, "", "", null, "", null,
       null) {
     @Override

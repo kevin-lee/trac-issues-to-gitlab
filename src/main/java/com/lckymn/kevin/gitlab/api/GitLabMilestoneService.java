@@ -15,10 +15,10 @@
  */
 package com.lckymn.kevin.gitlab.api;
 
-import java.util.Date;
 import java.util.List;
 
 import com.lckymn.kevin.gitlab.json.GitLabMilestone;
+import com.lckymn.kevin.gitlab.json.GitLabMilestone.GitLabMilestoneForCreation;
 
 /**
  * @author Lee, SeongHyun (Kevin)
@@ -28,5 +28,9 @@ public interface GitLabMilestoneService
 {
   List<GitLabMilestone> getAllGitLabMilestones(String privateToken, Long projectId);
 
-  GitLabMilestone createMilestone(String privateToken, Long projectId, String title, String description, Date dueDate);
+  GitLabMilestone createMilestone(String privateToken, Long projectId,
+      GitLabMilestoneForCreation gitLabMilestoneForCreation);
+
+  List<GitLabMilestone> createMilestonesIfNotExist(String privateToken, Long projectId,
+      List<GitLabMilestoneForCreation> gitLabMilestoneForCreationList);
 }

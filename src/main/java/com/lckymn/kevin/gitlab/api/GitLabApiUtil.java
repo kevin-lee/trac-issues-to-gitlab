@@ -64,6 +64,11 @@ public final class GitLabApiUtil
     return prepareUrl(url, privateToken, projectId, MILESTONES);
   }
 
+  public static String prepareUrlForIssues(final String url, final String privateToken, final Long projectId)
+  {
+    return prepareUrl(url, privateToken, projectId, ISSUES);
+  }
+
   public static String buildApiUrl(final String url)
   {
     return url + (url.endsWith("/") ? API_V3 : _API_V3);
@@ -78,7 +83,7 @@ public final class GitLabApiUtil
       final String json)
   {
     final JsonConvertible jsonConvertible = jsonStatham.convertJsonStringIntoJsonConvertible(json);
-    if (jsonConvertible.isJsonObject())
+    if (null != jsonConvertible && jsonConvertible.isJsonObject())
     {
       final JsonObject jsonObject = (JsonObject) jsonConvertible;
       if (!jsonObject.isNull() && jsonObject.containsName("message"))

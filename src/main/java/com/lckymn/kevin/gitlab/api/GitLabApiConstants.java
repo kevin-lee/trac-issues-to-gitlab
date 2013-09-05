@@ -51,6 +51,16 @@ public class GitLabApiConstants
   public static final String _MILESTONES = SLASH + MILESTONES;
 
   /**
+   * "issues"
+   */
+  public static final String ISSUES = "issues";
+
+  /**
+   * "/issues"
+   */
+  public static final String _ISSUES = SLASH + ISSUES;
+
+  /**
    * "private_token"
    */
   public static final String PRIVATE_TOKEN = "private_token";

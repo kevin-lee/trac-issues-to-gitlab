@@ -18,14 +18,17 @@ package com.lckymn.kevin.gitlab.api.impl;
 import static com.lckymn.kevin.gitlab.api.GitLabApiConstants.*;
 import static com.lckymn.kevin.gitlab.api.GitLabApiUtil.*;
 import static org.elixirian.kommonlee.util.Objects.*;
+import static org.elixirian.kommonlee.util.collect.Maps.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.elixirian.jsonstatham.core.JsonStatham;
 
 import com.lckymn.kevin.gitlab.api.GitLabIssueService;
 import com.lckymn.kevin.gitlab.json.GitLabIssue;
+import com.lckymn.kevin.gitlab.json.GitLabIssue.GitLabIssueForCreation;
 import com.lckymn.kevin.http.HttpRequestForJsonSource;
 
 /**
@@ -77,5 +80,24 @@ public class GitLabIssueServiceImpl implements GitLabIssueService
     final GitLabIssue[] resultOrThrowException = getResultOrThrowException(jsonStatham, GitLabIssue[].class, result);
     final GitLabIssue[] gitLabIssues = nullThenUse(resultOrThrowException, GitLabIssue.EMPTY_GITLAB_ISSUES);
     return Arrays.asList(gitLabIssues);
+  }
+
+  @Override
+  public GitLabIssue createIssue(final String privateToken, final Long projectId,
+      final GitLabIssueForCreation gitLabIssueForCreation)
+  {
+    final Map<String, Object> form = newHashMapWithInitialCapacity(3);
+    form.put("id", gitLabIssueForCreation.id);
+    form.put("title", gitLabIssueForCreation.title);
+    form.put("description", gitLabIssueForCreation.description);
+    form.put("assignee_id", gitLabIssueForCreation.assigneeId);
+    form.put("milestone_id", gitLabIssueForCreation.milestoneId);
+    form.put("labels", gitLabIssueForCreation.getLabels());
+    final String result = httpRequestForJsonSource.post(prepareUrlForIssues(projectUrl, privateToken, projectId))
+        .form(form)
+        .body();
+
+    final GitLabIssue resultOrThrowException = getResultOrThrowException(jsonStatham, GitLabIssue.class, result);
+    return resultOrThrowException;
   }
 }

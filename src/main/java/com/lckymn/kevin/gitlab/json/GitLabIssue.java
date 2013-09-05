@@ -24,6 +24,8 @@ import java.util.List;
 import org.elixirian.jsonstatham.annotation.Json;
 import org.elixirian.jsonstatham.annotation.JsonField;
 import org.elixirian.jsonstatham.annotation.ValueAccessor;
+import org.elixirian.kommonlee.util.string.StringGlues;
+import org.elixirian.kommonlee.util.string.StringIterableToStringGlue;
 
 /**
  * @author Lee, SeongHyun (Kevin)
@@ -58,8 +60,9 @@ public class GitLabIssue
     /**
      * labels (optional) - Comma-separated label names for an issue
      */
+    @ValueAccessor(name = "getLabels")
     @JsonField
-    public final List<String> labels;
+    private final List<String> labels;
 
     /**
      * assignee_id (optional) - The ID of a user to assign issue
@@ -73,6 +76,12 @@ public class GitLabIssue
     @JsonField(name = "milestone_id")
     public final Long milestoneId;
 
+    private static final StringIterableToStringGlue GLUE = StringGlues.builderForIterable()
+        .withSeparator(", ")
+        .ignoreNull()
+        .ignore("")
+        .build();
+
     public GitLabIssueForCreation(final Long id, final String title, final String description,
         final List<String> labels, final Long assigneeId, final Long milestoneId)
     {
@@ -82,6 +91,11 @@ public class GitLabIssue
       this.labels = labels;
       this.assigneeId = assigneeId;
       this.milestoneId = milestoneId;
+    }
+
+    public String getLabels()
+    {
+      return GLUE.glue(labels);
     }
 
     @Override

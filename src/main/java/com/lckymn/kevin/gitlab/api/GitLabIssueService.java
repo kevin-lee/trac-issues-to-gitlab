@@ -18,6 +18,7 @@ package com.lckymn.kevin.gitlab.api;
 import java.util.List;
 
 import com.lckymn.kevin.gitlab.json.GitLabIssue;
+import com.lckymn.kevin.gitlab.json.GitLabIssue.GitLabIssueForCreation;
 
 /**
  * @author Lee, SeongHyun (Kevin)
@@ -26,4 +27,6 @@ import com.lckymn.kevin.gitlab.json.GitLabIssue;
 public interface GitLabIssueService
 {
   List<GitLabIssue> getAllIssues(String privateToken, Long projectId);
+
+  GitLabIssue createIssue(String privateToken, Long projectId, GitLabIssueForCreation gitLabIssueForCreation);
 }

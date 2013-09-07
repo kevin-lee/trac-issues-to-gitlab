@@ -35,35 +35,15 @@ import com.lckymn.kevin.http.HttpRequestForJsonSource;
  * @author Lee, SeongHyun (Kevin)
  * @version 0.0.1 (2013-08-31)
  */
-public class GitLabIssueServiceImpl implements GitLabIssueService
+public class GitLabIssueServiceImpl extends AbstractGitLabService implements GitLabIssueService
 {
-  private final HttpRequestForJsonSource httpRequestForJsonSource;
-  private final JsonStatham jsonStatham;
-  private final String url;
   private final String projectUrl;
 
   public GitLabIssueServiceImpl(final HttpRequestForJsonSource httpRequestForJsonSource, final JsonStatham jsonStatham,
       final String url)
   {
-    this.httpRequestForJsonSource = httpRequestForJsonSource;
-    this.jsonStatham = jsonStatham;
-    this.url = buildApiUrl(url);
+    super(httpRequestForJsonSource, jsonStatham, url);
     this.projectUrl = this.url + _PROJECTS;
-  }
-
-  HttpRequestForJsonSource getHttpRequestForJsonSource()
-  {
-    return httpRequestForJsonSource;
-  }
-
-  JsonStatham getJsonStatham()
-  {
-    return jsonStatham;
-  }
-
-  String getUrl()
-  {
-    return url;
   }
 
   String getProjectUrl()
@@ -72,18 +52,18 @@ public class GitLabIssueServiceImpl implements GitLabIssueService
   }
 
   @Override
-  public List<GitLabIssue> getAllIssues(final String privateToken, final Long projectId)
+  public List<GitLabIssue> getAllIssues(final String privateToken, final Integer projectId)
   {
     final String result = httpRequestForJsonSource.get(prepareUrlForIssues(projectUrl, privateToken, projectId))
         .body();
 
     final GitLabIssue[] resultOrThrowException = getResultOrThrowException(jsonStatham, GitLabIssue[].class, result);
-    final GitLabIssue[] gitLabIssues = nullThenUse(resultOrThrowException, GitLabIssue.EMPTY_GITLAB_ISSUES);
+    final GitLabIssue[] gitLabIssues = nullThenUse(resultOrThrowException, GitLabIssue.EMPTY_GITLAB_ISSUE_ARRAY);
     return Arrays.asList(gitLabIssues);
   }
 
   @Override
-  public GitLabIssue createIssue(final String privateToken, final Long projectId,
+  public GitLabIssue createIssue(final String privateToken, final Integer projectId,
       final GitLabIssueForCreation gitLabIssueForCreation)
   {
     final Map<String, Object> form = newHashMapWithInitialCapacity(3);

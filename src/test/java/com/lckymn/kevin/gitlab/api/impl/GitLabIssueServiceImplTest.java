@@ -96,17 +96,17 @@ public class GitLabIssueServiceImplTest
     final HttpRequestForJsonSource httpRequestForJsonSource = mock(HttpRequestForJsonSource.class);
     final String url = "test-value";
 
-    final Long projectId = 1L;
+    final Integer projectId = 1;
     final String privateToken = "testPrivateToken";
 
-    final Long id1 = 1L;
+    final Integer id1 = 1;
     final String title1 = "issue 1";
     final String description1 = "some test description";
     final String labels1 = "";
     final Milestone milestone1 = null;
     final User assignee1 = null;
 
-    final Long author1Id = 2L;
+    final Integer author1Id = 2;
     final String author1Username = "kevinlee";
     final String author1Email = "kevinlee@some.email.address";
     final String author1Name = "Kevin Lee";
@@ -121,12 +121,12 @@ public class GitLabIssueServiceImplTest
     final String createdAt1 = "2013-09-01T00:16:11Z";
     final String updatedAt1 = "2013-09-01T00:16:11Z";
 
-    final Long id2 = 2L;
+    final Integer id2 = 2;
     final String title2 = "test issue 2";
     final String description2 = "test2";
     final String[] labels2 = { "task", "another" };
 
-    final Long milestone2Id = 2L;
+    final Integer milestone2Id = 2;
     final String milestone2Title = "some milestone title 2";
     final String milestone2Description = "Test milestone";
     final String milestone2DueDate = "2013-11-01";
@@ -134,7 +134,7 @@ public class GitLabIssueServiceImplTest
     final String milestone2UpdatedAt = "2013-09-01T12:10:40Z";
     final String milestone2CreatedAt = "2013-09-03T15:44:40Z";
 
-    final Long assignee2Id = 2L;
+    final Integer assignee2Id = 2;
     final String assignee2Username = "kevinlee";
     final String assignee2Email = "kevinlee@some.email.address";
     final String assignee2Name = "Kevin Lee";
@@ -145,7 +145,7 @@ public class GitLabIssueServiceImplTest
           + "\",\"name\":\"" + assignee2Name + "\",\"state\":\"" + assignee2State + "\",\"created_at\":\""
           + assignee2CreatedAt + "\"}";
 
-    final Long author2Id = 2L;
+    final Integer author2Id = 2;
     final String author2Username = "kevinlee";
     final String author2Email = "kevinlee@some.email.address";
     final String author2Name = "Kevin Lee";

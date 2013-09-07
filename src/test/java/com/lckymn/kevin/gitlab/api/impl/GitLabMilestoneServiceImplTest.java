@@ -105,7 +105,7 @@ public class GitLabMilestoneServiceImplTest
     /* then */
     assertThat(actual.getHttpRequestForJsonSource()).isEqualTo(expectedHttpRequestForJsonSource);
     assertThat(actual.getJsonStatham()).isEqualTo(expectedJsonStatham);
-    assertThat(actual.getUrl()).isEqualTo(expectedUrl);
+    assertThat(actual.getProjectsUrl()).isEqualTo(expectedUrl);
   }
 
   @Test
@@ -114,8 +114,8 @@ public class GitLabMilestoneServiceImplTest
     /* given */
     final String url = "http://localhost/gitlab";
     final String privateToken = "testPrivateToken";
-    final Long id1 = 1L;
-    final Long projectId1 = 1L;
+    final Integer id1 = 1;
+    final Integer projectId1 = 1;
     final String title1 = "test title 1";
     final String description1 = "some description";
     final String dueDate1 = "2013-12-01T01:00:00Z";
@@ -123,7 +123,7 @@ public class GitLabMilestoneServiceImplTest
     final String createdAt1 = "2013-08-25T11:25:35Z";
     final String updatedAt1 = "2013-08-25T11:55:12Z";
 
-    final Long id2 = 2L;
+    final Integer id2 = 2;
     final String title2 = "test title 2";
     final String description2 = "another description";
     final String dueDate2 = null;
@@ -171,7 +171,7 @@ public class GitLabMilestoneServiceImplTest
     /* given */
     final String url = "http://localhost/gitlab";
     final String privateToken = "testPrivateToken";
-    final Long projectId1 = 1L;
+    final Integer projectId1 = 1;
 
     final HttpRequest httpRequest = mock(HttpRequest.class);
     when(httpRequest.body()).thenReturn("{\"message\":\"404 Not Found\"}");
@@ -200,8 +200,8 @@ public class GitLabMilestoneServiceImplTest
     /* given */
     final String url = "http://localhost/gitlab";
     final String privateToken = "testPrivateToken";
-    final Long id1 = 1L;
-    final Long projectId1 = 1L;
+    final Integer id1 = 1;
+    final Integer projectId1 = 1;
     final String title = "test title 1";
     final String description = "some description";
     final String dueDate = "2013-12-01";
@@ -257,8 +257,8 @@ public class GitLabMilestoneServiceImplTest
     /* given */
     final String url = "http://localhost/gitlab";
     final String privateToken = "testPrivateToken";
-    final Long id1 = 1L;
-    final Long projectId = 1L;
+    final Integer id1 = 1;
+    final Integer projectId = 1;
     final String title1 = "test title 1";
     final String description1 = "some description";
     final String dueDate1 = "2013-12-01";
@@ -266,7 +266,7 @@ public class GitLabMilestoneServiceImplTest
     final String createdAt1 = "2013-08-25T11:25:35Z";
     final String updatedAt1 = "2013-08-25T11:55:12Z";
 
-    final Long id2 = 2L;
+    final Integer id2 = 2;
     final String title2 = "title 2";
     final String description2 = "another description";
     final String dueDate2 = null;
@@ -274,7 +274,7 @@ public class GitLabMilestoneServiceImplTest
     final String createdAt2 = "2013-09-03T11:51:00Z";
     final String updatedAt2 = "2013-09-03T11:51:00Z";
 
-    final Long id3 = 3L;
+    final Integer id3 = 3;
     final String title3 = "M 3";
     final String description3 = "The 3rd description";
     final String dueDate3 = null;

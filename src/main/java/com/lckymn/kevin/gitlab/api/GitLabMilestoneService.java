@@ -26,11 +26,11 @@ import com.lckymn.kevin.gitlab.json.GitLabMilestone.GitLabMilestoneForCreation;
  */
 public interface GitLabMilestoneService
 {
-  List<GitLabMilestone> getAllGitLabMilestones(String privateToken, Long projectId);
+  List<GitLabMilestone> getAllGitLabMilestones(String privateToken, Integer projectId);
 
-  GitLabMilestone createMilestone(String privateToken, Long projectId,
+  GitLabMilestone createMilestone(String privateToken, Integer projectId,
       GitLabMilestoneForCreation gitLabMilestoneForCreation);
 
-  List<GitLabMilestone> createMilestonesIfNotExist(String privateToken, Long projectId,
+  List<GitLabMilestone> createMilestonesIfNotExist(String privateToken, Integer projectId,
       List<GitLabMilestoneForCreation> gitLabMilestoneForCreationList);
 }

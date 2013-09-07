@@ -15,7 +15,9 @@
  */
 package com.lckymn.kevin.gitlab.api.impl;
 
+import static com.lckymn.kevin.gitlab.api.GitLabApiConstants.*;
 import static com.lckymn.kevin.gitlab.api.GitLabApiUtil.*;
+import static org.elixirian.kommonlee.util.Objects.*;
 import static org.elixirian.kommonlee.util.collect.Lists.*;
 import static org.elixirian.kommonlee.util.collect.Maps.*;
 import static org.elixirian.kommonlee.util.collect.Sets.*;
@@ -37,53 +39,42 @@ import com.lckymn.kevin.http.HttpRequestForJsonSource;
  * @author Lee, SeongHyun (Kevin)
  * @version 0.0.1 (2013-08-31)
  */
-public class GitLabMilestoneServiceImpl implements GitLabMilestoneService
+public class GitLabMilestoneServiceImpl extends AbstractGitLabService implements GitLabMilestoneService
 {
-  private final HttpRequestForJsonSource httpRequestForJsonSource;
-  private final JsonStatham jsonStatham;
-  private final String url;
+  private final String projectsUrl;
 
   public GitLabMilestoneServiceImpl(final HttpRequestForJsonSource httpRequestForJsonSource,
       final JsonStatham jsonStatham, final String url)
   {
-    this.httpRequestForJsonSource = httpRequestForJsonSource;
-    this.jsonStatham = jsonStatham;
-    this.url = buildApiUrlForProjects(url);
+    super(httpRequestForJsonSource, jsonStatham, url);
+    this.projectsUrl = this.url + _PROJECTS;
   }
 
-  HttpRequestForJsonSource getHttpRequestForJsonSource()
+  String getProjectsUrl()
   {
-    return httpRequestForJsonSource;
-  }
-
-  JsonStatham getJsonStatham()
-  {
-    return jsonStatham;
-  }
-
-  String getUrl()
-  {
-    return url;
+    return projectsUrl;
   }
 
   @Override
-  public List<GitLabMilestone> getAllGitLabMilestones(final String privateToken, final Long projectId)
+  public List<GitLabMilestone> getAllGitLabMilestones(final String privateToken, final Integer projectId)
   {
-    final String result = httpRequestForJsonSource.get(prepareUrlForMilestones(url, privateToken, projectId))
+    final String result = httpRequestForJsonSource.get(prepareUrlForMilestones(projectsUrl, privateToken, projectId))
         .body();
-    final GitLabMilestone[] gitLabMilestones = getResultOrThrowException(jsonStatham, GitLabMilestone[].class, result);
+    final GitLabMilestone[] gitLabMilestones =
+      nullThenUse(getResultOrThrowException(jsonStatham, GitLabMilestone[].class, result),
+          GitLabMilestone.EMPTY_GIT_LAB_MILESTONE_ARRAY);
     return Arrays.asList(gitLabMilestones);
   }
 
   @Override
-  public GitLabMilestone createMilestone(final String privateToken, final Long projectId,
+  public GitLabMilestone createMilestone(final String privateToken, final Integer projectId,
       final GitLabMilestoneForCreation gitLabMilestoneForCreation)
   {
     final Map<String, String> form = newHashMapWithInitialCapacity(3);
     form.put("title", gitLabMilestoneForCreation.title);
     form.put("description", gitLabMilestoneForCreation.description);
     form.put("due_date", gitLabMilestoneForCreation.getDueDateInUtcString());
-    final String result = httpRequestForJsonSource.post(prepareUrlForMilestones(url, privateToken, projectId))
+    final String result = httpRequestForJsonSource.post(prepareUrlForMilestones(projectsUrl, privateToken, projectId))
         .form(form)
         .body();
     final GitLabMilestone gitLabMilestone = getResultOrThrowException(jsonStatham, GitLabMilestone.class, result);
@@ -91,7 +82,7 @@ public class GitLabMilestoneServiceImpl implements GitLabMilestoneService
   }
 
   @Override
-  public List<GitLabMilestone> createMilestonesIfNotExist(final String privateToken, final Long projectId,
+  public List<GitLabMilestone> createMilestonesIfNotExist(final String privateToken, final Integer projectId,
       final List<GitLabMilestoneForCreation> gitLabMilestoneForCreationList)
   {
     final Set<GitLabMilestoneForCreation> gitLabMilestoneForCreationListWithUniqueTitle = newHashSet();

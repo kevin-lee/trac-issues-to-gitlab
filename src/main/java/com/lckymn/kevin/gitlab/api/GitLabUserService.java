@@ -17,16 +17,13 @@ package com.lckymn.kevin.gitlab.api;
 
 import java.util.List;
 
-import com.lckymn.kevin.gitlab.json.GitLabIssue;
-import com.lckymn.kevin.gitlab.json.GitLabIssue.GitLabIssueForCreation;
+import com.lckymn.kevin.gitlab.json.GitLabUser;
 
 /**
  * @author Lee, SeongHyun (Kevin)
- * @version 0.0.1 (2013-08-31)
+ * @version 0.0.1 (2013-09-06)
  */
-public interface GitLabIssueService
+public interface GitLabUserService
 {
-  List<GitLabIssue> getAllIssues(String privateToken, Integer projectId);
-
-  GitLabIssue createIssue(String privateToken, Integer projectId, GitLabIssueForCreation gitLabIssueForCreation);
+  List<GitLabUser> getAllGitLabUsers(String privateToken);
 }

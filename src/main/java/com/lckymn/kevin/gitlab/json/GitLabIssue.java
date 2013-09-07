@@ -34,7 +34,7 @@ import org.elixirian.kommonlee.util.string.StringIterableToStringGlue;
 @Json
 public class GitLabIssue
 {
-  public static final GitLabIssue[] EMPTY_GITLAB_ISSUES = new GitLabIssue[0];
+  public static final GitLabIssue[] EMPTY_GITLAB_ISSUE_ARRAY = new GitLabIssue[0];
 
   @Json
   public static class GitLabIssueForCreation
@@ -43,7 +43,7 @@ public class GitLabIssue
      * id (required) - The ID of a project
      */
     @JsonField
-    public final Long id;
+    public final Integer id;
 
     /**
      * title (required) - The title of an issue
@@ -68,13 +68,13 @@ public class GitLabIssue
      * assignee_id (optional) - The ID of a user to assign issue
      */
     @JsonField(name = "assignee_id")
-    public final Long assigneeId;
+    public final Integer assigneeId;
 
     /**
      * milestone_id (optional) - The ID of a milestone to assign issue
      */
     @JsonField(name = "milestone_id")
-    public final Long milestoneId;
+    public final Integer milestoneId;
 
     private static final StringIterableToStringGlue GLUE = StringGlues.builderForIterable()
         .withSeparator(", ")
@@ -82,8 +82,8 @@ public class GitLabIssue
         .ignore("")
         .build();
 
-    public GitLabIssueForCreation(final Long id, final String title, final String description,
-        final List<String> labels, final Long assigneeId, final Long milestoneId)
+    public GitLabIssueForCreation(final Integer id, final String title, final String description,
+        final List<String> labels, final Integer assigneeId, final Integer milestoneId)
     {
       this.id = id;
       this.title = title;
@@ -143,10 +143,10 @@ public class GitLabIssue
   public static class Milestone
   {
     @JsonField
-    public final Long id;
+    public final Integer id;
 
     @JsonField(name = "project_id")
-    public final Long projectId;
+    public final Integer projectId;
 
     @JsonField
     public final String title;
@@ -169,7 +169,7 @@ public class GitLabIssue
     @JsonField(name = "updated_at")
     public final Date updatedAt;
 
-    public Milestone(final Long id, final Long projectId, final String title, final String description,
+    public Milestone(final Integer id, final Integer projectId, final String title, final String description,
         final String dueDate, final String state, final String createdAt, final String updatedAt)
     {
       this.id = id;
@@ -247,7 +247,7 @@ public class GitLabIssue
   public static class User
   {
     @JsonField
-    public final Long id;
+    public final Integer id;
 
     @JsonField
     public final String username;
@@ -265,7 +265,7 @@ public class GitLabIssue
     @JsonField(name = "created_at")
     public final Date createdAt;
 
-    public User(final Long id, final String username, final String email, final String name, final String state,
+    public User(final Integer id, final String username, final String email, final String name, final String state,
         final String createdAt)
     {
       this.id = id;
@@ -326,10 +326,10 @@ public class GitLabIssue
    * id (required) - The ID of a project
    */
   @JsonField
-  public final Long id;
+  public final Integer id;
 
   @JsonField(name = "project_id")
-  public final Long projectId;
+  public final Integer projectId;
 
   /**
    * title (required) - The title of an issue
@@ -369,7 +369,7 @@ public class GitLabIssue
   @JsonField(name = "updated_at")
   public final Date updatedAt;
 
-  public GitLabIssue(final Long id, final Long projectId, final String title, final String description,
+  public GitLabIssue(final Integer id, final Integer projectId, final String title, final String description,
       final List<String> labels, final Milestone milestone, final User author, final User assignee, final String state,
       final String createdAt, final String updatedAt)
   {

@@ -50,7 +50,7 @@ public class GitLabProject
     };
 
     @JsonField
-    public final Long id;
+    public final Integer id;
 
     @JsonField
     public final String username;
@@ -68,7 +68,7 @@ public class GitLabProject
     @JsonField(name = "created_at")
     public final Date createdAt;
 
-    public Owner(final Long id, final String username, final String email, final String name, final String state,
+    public Owner(final Integer id, final String username, final String email, final String name, final String state,
         final String createdAt)
     {
       this.id = id;
@@ -128,7 +128,7 @@ public class GitLabProject
     };
 
     @JsonField
-    public final Long id;
+    public final Integer id;
 
     @JsonField
     public final String name;
@@ -141,7 +141,7 @@ public class GitLabProject
     public final String description;
 
     @JsonField(name = "owner_id")
-    public final Long ownerId;
+    public final Integer ownerId;
 
     @JsonField
     public final String path;
@@ -150,8 +150,8 @@ public class GitLabProject
     @JsonField(name = "updated_at")
     public final Date updatedAt;
 
-    public Namespace(final Long id, final String name, final String createdAt, final String description,
-        final Long ownerId, final String path, final String updatedAt)
+    public Namespace(final Integer id, final String name, final String createdAt, final String description,
+        final Integer ownerId, final String path, final String updatedAt)
     {
       this.id = id;
       this.name = name;
@@ -216,7 +216,7 @@ public class GitLabProject
   };
 
   @JsonField
-  public final Long id;
+  public final Integer id;
 
   @JsonField
   public final String description;
@@ -277,7 +277,7 @@ public class GitLabProject
   @JsonField
   public final Namespace namespace;
 
-  public GitLabProject(final Long id, final String description, final String defaultBranch, final boolean isPublic,
+  public GitLabProject(final Integer id, final String description, final String defaultBranch, final boolean isPublic,
       final String sshUrlToRepo, final String httpUrlToRepo, final String webUrl, final Owner owner, final String name,
       final String nameWithNamespace, final String path, final String pathWithNamespace, final boolean issuesEnabled,
       final boolean mergeRequestsEnabled, final boolean wallEnabled, final boolean wikiEnabled,

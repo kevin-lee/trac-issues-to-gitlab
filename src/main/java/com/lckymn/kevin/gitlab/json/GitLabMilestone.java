@@ -59,11 +59,13 @@ public class GitLabMilestone
     }
   };
 
+  public static final GitLabMilestone[] EMPTY_GIT_LAB_MILESTONE_ARRAY = new GitLabMilestone[0];
+
   @JsonField
-  public final Long id;
+  public final Integer id;
 
   @JsonField(name = "project_id")
-  public final Long projectId;
+  public final Integer projectId;
 
   @JsonField
   public final String title;
@@ -86,7 +88,7 @@ public class GitLabMilestone
   @JsonField(name = "updated_at")
   public final Date updatedAt;
 
-  public GitLabMilestone(final Long id, final Long projectId, final String title, final String description,
+  public GitLabMilestone(final Integer id, final Integer projectId, final String title, final String description,
       final String dueDate, final String state, final String createdAt, final String updatedAt)
   {
     this.id = id;

@@ -15,6 +15,7 @@
  */
 package com.lckymn.kevin.gitlab.api.impl;
 
+import static com.lckymn.kevin.gitlab.api.GitLabApiConstants.*;
 import static com.lckymn.kevin.gitlab.api.GitLabApiUtil.*;
 import static org.elixirian.kommonlee.util.Objects.*;
 
@@ -31,24 +32,21 @@ import com.lckymn.kevin.http.HttpRequestForJsonSource;
  * @author Lee, SeongHyun (Kevin)
  * @version 0.0.1 (2013-08-31)
  */
-public class GitLabProjectServiceImpl implements GitLabProjectService
+public class GitLabProjectServiceImpl extends AbstractGitLabService implements GitLabProjectService
 {
-  private final HttpRequestForJsonSource httpRequestForJsonSource;
-  private final JsonStatham jsonStatham;
-  private final String url;
+  private final String projectsUrl;
 
   public GitLabProjectServiceImpl(final HttpRequestForJsonSource httpRequestForJsonSource,
       final JsonStatham jsonStatham, final String url)
   {
-    this.httpRequestForJsonSource = httpRequestForJsonSource;
-    this.jsonStatham = jsonStatham;
-    this.url = buildApiUrlForProjects(url);
+    super(httpRequestForJsonSource, jsonStatham, url);
+    this.projectsUrl = this.url + _PROJECTS;
   }
 
   @Override
   public List<GitLabProject> getAllGitLabProjects(final String privateToken)
   {
-    final String result = httpRequestForJsonSource.get(prepareUrl(url, privateToken))
+    final String result = httpRequestForJsonSource.get(prepareUrl(projectsUrl, privateToken))
         .body();
 
     final GitLabProject[] gitLabProjects = jsonStatham.convertFromJson(GitLabProject[].class, result);

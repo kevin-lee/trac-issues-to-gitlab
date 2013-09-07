@@ -59,12 +59,12 @@ public final class GitLabApiUtil
         .toString();
   }
 
-  public static String prepareUrlForMilestones(final String url, final String privateToken, final Long projectId)
+  public static String prepareUrlForMilestones(final String url, final String privateToken, final Integer projectId)
   {
     return prepareUrl(url, privateToken, projectId, MILESTONES);
   }
 
-  public static String prepareUrlForIssues(final String url, final String privateToken, final Long projectId)
+  public static String prepareUrlForIssues(final String url, final String privateToken, final Integer projectId)
   {
     return prepareUrl(url, privateToken, projectId, ISSUES);
   }

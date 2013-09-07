@@ -16,6 +16,7 @@
 package com.lckymn.kevin.gitlab.api;
 
 import java.util.List;
+import java.util.Set;
 
 import com.lckymn.kevin.gitlab.json.GitLabUser;
 
@@ -26,4 +27,8 @@ import com.lckymn.kevin.gitlab.json.GitLabUser;
 public interface GitLabUserService
 {
   List<GitLabUser> getAllGitLabUsers(String privateToken);
+
+  List<GitLabUser> getGitLabUsersByUsernames(String privateToken, Set<String> usernames);
+
+  List<GitLabUser> getGitLabUsersByUsernames(String privateToken, String username, String... usernames);
 }

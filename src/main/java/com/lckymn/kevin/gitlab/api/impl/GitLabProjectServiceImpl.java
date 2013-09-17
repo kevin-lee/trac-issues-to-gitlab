@@ -20,6 +20,7 @@ import static com.lckymn.kevin.gitlab.api.GitLabApiUtil.*;
 import static org.elixirian.kommonlee.util.Objects.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.elixirian.jsonstatham.core.JsonStatham;
@@ -43,6 +44,11 @@ public class GitLabProjectServiceImpl extends AbstractGitLabService implements G
     this.projectsUrl = this.url + _PROJECTS;
   }
 
+  String getProjectsUrl()
+  {
+    return projectsUrl;
+  }
+
   @Override
   public List<GitLabProject> getAllGitLabProjects(final String privateToken)
   {
@@ -50,7 +56,7 @@ public class GitLabProjectServiceImpl extends AbstractGitLabService implements G
         .body();
 
     final GitLabProject[] gitLabProjects = jsonStatham.convertFromJson(GitLabProject[].class, result);
-    return Arrays.asList(gitLabProjects);
+    return null == gitLabProjects ? Collections.<GitLabProject> emptyList() : Arrays.asList(gitLabProjects);
   }
 
   @Override

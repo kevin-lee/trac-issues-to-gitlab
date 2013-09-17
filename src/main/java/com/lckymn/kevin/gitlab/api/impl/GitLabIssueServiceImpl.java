@@ -67,7 +67,7 @@ public class GitLabIssueServiceImpl extends AbstractGitLabService implements Git
       final GitLabIssueForCreation gitLabIssueForCreation)
   {
     final Map<String, Object> form = newHashMapWithInitialCapacity(3);
-    form.put("id", gitLabIssueForCreation.id);
+    form.put("id", gitLabIssueForCreation.projectId);
     form.put("title", gitLabIssueForCreation.title);
     form.put("description", gitLabIssueForCreation.description);
     form.put("assignee_id", gitLabIssueForCreation.assigneeId);

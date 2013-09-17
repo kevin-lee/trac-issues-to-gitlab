@@ -42,8 +42,8 @@ public class GitLabIssue
     /**
      * id (required) - The ID of a project
      */
-    @JsonField
-    public final Integer id;
+    @JsonField(name = "id")
+    public final Integer projectId;
 
     /**
      * title (required) - The title of an issue
@@ -82,10 +82,10 @@ public class GitLabIssue
         .ignore("")
         .build();
 
-    public GitLabIssueForCreation(final Integer id, final String title, final String description,
+    public GitLabIssueForCreation(final Integer projectId, final String title, final String description,
         final List<String> labels, final Integer assigneeId, final Integer milestoneId)
     {
-      this.id = id;
+      this.projectId = projectId;
       this.title = title;
       this.description = description;
       this.labels = labels;
@@ -101,7 +101,7 @@ public class GitLabIssue
     @Override
     public int hashCode()
     {
-      return hash(this.id, this.title, this.description, this.labels, this.assigneeId, this.milestoneId);
+      return hash(this.projectId, this.title, this.description, this.labels, this.assigneeId, this.milestoneId);
     }
 
     @Override
@@ -114,7 +114,7 @@ public class GitLabIssue
       final GitLabIssueForCreation that = castIfInstanceOf(GitLabIssueForCreation.class, gitLabIssueForCreation);
       /* @formatter:off */
       return null != that &&
-              (equal(this.id, that.id) &&
+              (equal(this.projectId, that.projectId) &&
                equal(this.title, that.title) &&
                equal(this.description, that.description) &&
                equal(this.labels, that.labels) &&
@@ -128,7 +128,7 @@ public class GitLabIssue
     {
       /* @formatter:off */
       return toStringBuilder(this)
-              .add("id", id)
+              .add("id", projectId)
               .add("title", title)
               .add("description", description)
               .add("labels", labels)

@@ -22,6 +22,7 @@ import java.util.Date;
 import org.elixirian.jsonstatham.annotation.Json;
 import org.elixirian.jsonstatham.annotation.JsonField;
 import org.elixirian.jsonstatham.annotation.ValueAccessor;
+import org.elixirian.kommonlee.type.GenericBuilder;
 
 import com.lckymn.kevin.util.DateAndTimeFormatUtil;
 
@@ -92,6 +93,31 @@ public class GitLabProject
     public boolean isNotEmpty()
     {
       return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+      return hash(this.id, this.username, this.email, this.name, this.state, this.createdAt);
+    }
+
+    @Override
+    public boolean equals(final Object owner)
+    {
+      if (this == owner)
+      {
+        return true;
+      }
+      final Owner that = castIfInstanceOf(Owner.class, owner);
+      /* @formatter:off */
+      return null != that &&
+              (equal(this.id, that.id) &&
+               equal(this.username, that.username) &&
+               equal(this.email, that.email) &&
+               equal(this.name, that.name) &&
+               equal(this.state, that.state) &&
+               equal(this.createdAt, that.createdAt));
+      /* @formatter:on */
     }
 
     @Override
@@ -180,6 +206,32 @@ public class GitLabProject
     public boolean isNotEmpty()
     {
       return true;
+    }
+
+    @Override
+    public int hashCode()
+    {
+      return hash(this.id, this.name, this.createdAt, this.description, this.ownerId, this.path, this.updatedAt);
+    }
+
+    @Override
+    public boolean equals(final Object namespace)
+    {
+      if (this == namespace)
+      {
+        return true;
+      }
+      final Namespace that = castIfInstanceOf(Namespace.class, namespace);
+      /* @formatter:off */
+      return null != that &&
+              (equal(this.id, that.id) &&
+               equal(this.name, that.name) &&
+               equal(this.createdAt, that.createdAt) &&
+               equal(this.description, that.description) &&
+               equal(this.ownerId, that.ownerId) &&
+               equal(this.path, that.path) &&
+               equal(this.updatedAt, that.updatedAt));
+      /* @formatter:on */
     }
 
     @Override
@@ -305,6 +357,199 @@ public class GitLabProject
     this.namespace = namespace;
   }
 
+  public static class Builder implements GenericBuilder<GitLabProject>
+  {
+    Integer id;
+    String description;
+    String defaultBranch;
+    boolean isPublic;
+    String sshUrlToRepo;
+    String httpUrlToRepo;
+    String webUrl;
+    Owner owner;
+    String name;
+    String nameWithNamespace;
+    String path;
+    String pathWithNamespace;
+    boolean issuesEnabled;
+    boolean mergeRequestsEnabled;
+    boolean wallEnabled;
+    boolean wikiEnabled;
+    boolean snippetsEnabled;
+    String createdAt;
+    String lastActivityAt;
+    Namespace namespace;
+
+    public Builder id(final Integer id)
+    {
+      this.id = id;
+      return this;
+    }
+
+    public Builder description(final String description)
+    {
+      this.description = description;
+      return this;
+    }
+
+    public Builder defaultBranch(final String defaultBranch)
+    {
+      this.defaultBranch = defaultBranch;
+      return this;
+    }
+
+    public Builder itIsPublic()
+    {
+      this.isPublic = true;
+      return this;
+    }
+
+    public Builder itIsNotPublic()
+    {
+      this.isPublic = false;
+      return this;
+    }
+
+    public Builder sshUrlToRepo(final String sshUrlToRepo)
+    {
+      this.sshUrlToRepo = sshUrlToRepo;
+      return this;
+    }
+
+    public Builder httpUrlToRepo(final String httpUrlToRepo)
+    {
+      this.httpUrlToRepo = httpUrlToRepo;
+      return this;
+    }
+
+    public Builder webUrl(final String webUrl)
+    {
+      this.webUrl = webUrl;
+      return this;
+    }
+
+    public Builder owner(final Owner owner)
+    {
+      this.owner = owner;
+      return this;
+    }
+
+    public Builder name(final String name)
+    {
+      this.name = name;
+      return this;
+    }
+
+    public Builder nameWithNamespace(final String nameWithNamespace)
+    {
+      this.nameWithNamespace = nameWithNamespace;
+      return this;
+    }
+
+    public Builder path(final String path)
+    {
+      this.path = path;
+      return this;
+    }
+
+    public Builder pathWithNamespace(final String pathWithNamespace)
+    {
+      this.pathWithNamespace = pathWithNamespace;
+      return this;
+    }
+
+    public Builder issuesEnabled()
+    {
+      this.issuesEnabled = true;
+      return this;
+    }
+
+    public Builder issuesDisabled()
+    {
+      this.issuesEnabled = false;
+      return this;
+    }
+
+    public Builder mergeRequestsEnabled()
+    {
+      this.mergeRequestsEnabled = true;
+      return this;
+    }
+
+    public Builder mergeRequestsDisabled()
+    {
+      this.mergeRequestsEnabled = false;
+      return this;
+    }
+
+    public Builder wallEnabled()
+    {
+      this.wallEnabled = true;
+      return this;
+    }
+
+    public Builder wallDisabled()
+    {
+      this.wallEnabled = false;
+      return this;
+    }
+
+    public Builder wikiEnabled()
+    {
+      this.wikiEnabled = true;
+      return this;
+    }
+
+    public Builder wikiDisabled()
+    {
+      this.wikiEnabled = false;
+      return this;
+    }
+
+    public Builder snippetsEnabled()
+    {
+      this.snippetsEnabled = true;
+      return this;
+    }
+
+    public Builder snippetsDisabled()
+    {
+      this.snippetsEnabled = false;
+      return this;
+    }
+
+    public Builder createdAt(final String createdAt)
+    {
+      this.createdAt = createdAt;
+      return this;
+    }
+
+    public Builder lastActivityAt(final String lastActivityAt)
+    {
+      this.lastActivityAt = lastActivityAt;
+      return this;
+    }
+
+    public Builder namespace(final Namespace namespace)
+    {
+      this.namespace = namespace;
+      return this;
+    }
+
+    @Override
+    public GitLabProject build()
+    {
+      return new GitLabProject(id, description, defaultBranch, isPublic, sshUrlToRepo, httpUrlToRepo, webUrl, owner,
+          name, nameWithNamespace, path, pathWithNamespace, issuesEnabled, mergeRequestsEnabled, wallEnabled,
+          wikiEnabled, snippetsEnabled, createdAt, lastActivityAt, namespace);
+    }
+  }
+
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
   public String getCreatedAtInUtcString()
   {
     return DateAndTimeFormatUtil.formatUtcDateAndTimeIfNotNull(createdAt);
@@ -323,6 +568,48 @@ public class GitLabProject
   public boolean isNotEmpty()
   {
     return true;
+  }
+
+  @Override
+  public int hashCode()
+  {
+    return hash(this.id, this.description, this.defaultBranch, this.isPublic, this.sshUrlToRepo, this.httpUrlToRepo,
+        this.webUrl, this.owner, this.name, this.nameWithNamespace, this.path, this.pathWithNamespace,
+        this.issuesEnabled, this.mergeRequestsEnabled, this.wallEnabled, this.wikiEnabled, this.snippetsEnabled,
+        this.createdAt, this.lastActivityAt, this.namespace);
+  }
+
+  @Override
+  public boolean equals(final Object gitLabProject)
+  {
+    if (this == gitLabProject)
+    {
+      return true;
+    }
+    final GitLabProject that = castIfInstanceOf(GitLabProject.class, gitLabProject);
+    /* @formatter:off */
+    return null != that &&
+            (equal(this.id, that.id) &&
+             equal(this.description, that.description) &&
+             equal(this.defaultBranch, that.defaultBranch) &&
+             equal(this.isPublic, that.isPublic) &&
+             equal(this.sshUrlToRepo, that.sshUrlToRepo) &&
+             equal(this.httpUrlToRepo, that.httpUrlToRepo) &&
+             equal(this.webUrl, that.webUrl) &&
+             equal(this.owner, that.owner) &&
+             equal(this.name, that.name) &&
+             equal(this.nameWithNamespace, that.nameWithNamespace) &&
+             equal(this.path, that.path) &&
+             equal(this.pathWithNamespace, that.pathWithNamespace) &&
+             equal(this.issuesEnabled, that.issuesEnabled) &&
+             equal(this.mergeRequestsEnabled, that.mergeRequestsEnabled) &&
+             equal(this.wallEnabled, that.wallEnabled) &&
+             equal(this.wikiEnabled, that.wikiEnabled) &&
+             equal(this.snippetsEnabled, that.snippetsEnabled) &&
+             equal(this.createdAt, that.createdAt) &&
+             equal(this.lastActivityAt, that.lastActivityAt) &&
+             equal(this.namespace, that.namespace));
+    /* @formatter:on */
   }
 
   @Override

@@ -36,6 +36,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.lckymn.kevin.trac.json.TracIssue;
+import com.lckymn.kevin.trac.json.TracIssueComment;
 import com.lckymn.kevin.trac.rpc.TracRpcConfig;
 import com.lckymn.kevin.util.DateAndTimeFormatUtil;
 
@@ -125,7 +126,17 @@ public class TracXmlRpcServiceTest
 
     when(xmlRpcClient.execute("ticket.get", Arrays.asList(id))).thenReturn(new Object[] { id, null, null, map });
 
-    final TracIssue expected = TracIssue.newInstance(id, map);
+    final Object[] changeLogs =
+      new Object[] { new Object[] { new Date(), "kevinlee", "comment", "1", "some test comment", 1 },
+          new Object[] { new Date(), "kevinlee", "resolution", "", "fixed", 1 },
+          new Object[] { new Date(), "kevinlee", "comment", "1", "something else", 1 },
+          new Object[] { new Date(), "kevinlee", "status", "closed", "reopened", 1 },
+          new Object[] { new Date(), "kevinlee", "resolution", "", "fixed", 1 },
+          new Object[] { new Date(), "kevinlee", "comment", "1", "blah blah", 1 } };
+    when(xmlRpcClient.execute("ticket.changeLog", Arrays.asList(id, 0))).thenReturn(changeLogs);
+
+    final TracIssue expected = TracIssue.newInstance(id, map, changeLogs);
+    final List<TracIssueComment> expectedTracIssueComments = expected.getTracIssueComments();
     final TracXmlRpcService tracXmlRpcService = new TracXmlRpcService(xmlRpcClient);
 
     /* when */
@@ -133,6 +144,14 @@ public class TracXmlRpcServiceTest
 
     /* then */
     assertThat(actual).isEqualTo(expected);
+    final List<TracIssueComment> actualTracIssueComments = actual.getTracIssueComments();
+    assertThat(actualTracIssueComments).isEqualTo(expectedTracIssueComments);
+    assertThat(actualTracIssueComments.get(0)
+        .getOriginalIndex()).isEqualTo(0);
+    assertThat(actualTracIssueComments.get(1)
+        .getOriginalIndex()).isEqualTo(2);
+    assertThat(actualTracIssueComments.get(2)
+        .getOriginalIndex()).isEqualTo(5);
     verify(xmlRpcClient, times(1)).execute("ticket.get", Arrays.asList(id));
   }
 
@@ -182,7 +201,16 @@ public class TracXmlRpcServiceTest
     when(xmlRpcClient.execute("ticket.get", Arrays.asList(id))).thenReturn(new Object[] { id, null, null, map });
     when(xmlRpcClient.execute("ticket.query", Arrays.asList("max=0"))).thenReturn(new Object[] { id });
 
-    final List<TracIssue> expected = Arrays.asList(TracIssue.newInstance(id, map));
+    final Object[] changeLogs =
+      new Object[] { new Object[] { new Date(), "kevinlee", "comment", "1", "some test comment", 1 },
+          new Object[] { new Date(), "kevinlee", "resolution", "", "fixed", 1 },
+          new Object[] { new Date(), "kevinlee", "comment", "1", "something else", 1 },
+          new Object[] { new Date(), "kevinlee", "status", "closed", "reopened", 1 },
+          new Object[] { new Date(), "kevinlee", "resolution", "", "fixed", 1 },
+          new Object[] { new Date(), "kevinlee", "comment", "1", "blah blah", 1 } };
+    when(xmlRpcClient.execute("ticket.changeLog", Arrays.asList(id, 0))).thenReturn(changeLogs);
+
+    final List<TracIssue> expected = Arrays.asList(TracIssue.newInstance(id, map, changeLogs));
     final TracXmlRpcService tracXmlRpcService = new TracXmlRpcService(xmlRpcClient);
 
     /* when */

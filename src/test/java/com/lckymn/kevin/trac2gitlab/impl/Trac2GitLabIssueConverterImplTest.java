@@ -20,6 +20,7 @@ import static org.elixirian.kommonlee.util.collect.Maps.*;
 import static org.fest.assertions.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -267,7 +268,15 @@ public class Trac2GitLabIssueConverterImplTest
       final String cc = "user1, user2";
       map.put("cc", cc);
 
-      tracIssue = TracIssue.newInstance(1, map);
+      final Object[] changeLogs =
+        new Object[] { new Object[] { new Date(), "kevinlee", "comment", "1", "some test comment", 1 },
+            new Object[] { new Date(), "kevinlee", "resolution", "", "fixed", 1 },
+            new Object[] { new Date(), "kevinlee", "comment", "1", "something else", 1 },
+            new Object[] { new Date(), "kevinlee", "status", "closed", "reopened", 1 },
+            new Object[] { new Date(), "kevinlee", "resolution", "", "fixed", 1 },
+            new Object[] { new Date(), "kevinlee", "comment", "1", "blah blah", 1 } };
+
+      tracIssue = TracIssue.newInstance(1, map, changeLogs);
     }
     final GitLabIssueForCreation expected =
       new GitLabIssueForCreation(gitLabProject.id, tracIssue.getSummary(), tracIssue.getDescription(), asList(

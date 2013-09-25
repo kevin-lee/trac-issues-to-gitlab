@@ -27,6 +27,7 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 import com.lckymn.kevin.trac.json.TracIssue;
+import com.lckymn.kevin.trac.json.TracIssueComment;
 import com.lckymn.kevin.trac.rpc.TracRpcConfig;
 import com.lckymn.kevin.trac.rpc.TracRpcService;
 import com.lckymn.kevin.xmlrpc.exception.RuntimeXmlRpcException;
@@ -53,9 +54,11 @@ public class TracXmlRpcService implements TracRpcService
   public TracIssue get(final Integer id)
   {
     final Object[] results;
+    final Object[] changeLogs;
     try
     {
       results = (Object[]) xmlRpcClient.execute("ticket.get", Arrays.asList(id));
+      changeLogs = (Object[]) xmlRpcClient.execute("ticket.changeLog", Arrays.asList(id, 0));
     }
     catch (final XmlRpcException e)
     {
@@ -68,7 +71,8 @@ public class TracXmlRpcService implements TracRpcService
     {
       @SuppressWarnings("unchecked")
       final Map<String, Object> map = ((Map<String, Object>) each);
-      return TracIssue.newInstance(idFromServer, map);
+
+      return TracIssue.newInstance(idFromServer, map, changeLogs);
     }
     throw new RuntimeXmlRpcException(
         "Invalid result. The element at the index 3 is not a Map containing the issue details. [type: "

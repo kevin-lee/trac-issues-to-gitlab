@@ -17,6 +17,7 @@ package com.lckymn.kevin.trac.json;
 
 import static org.elixirian.kommonlee.util.Objects.*;
 import static org.elixirian.kommonlee.util.Strings.*;
+import static org.elixirian.kommonlee.util.collect.Lists.*;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -93,10 +94,13 @@ public class TracIssue
   @JsonField
   private final List<String> cc;
 
+  @JsonField
+  private final List<TracIssueComment> tracIssueComments;
+
   public TracIssue(final Integer id, final String summary, final List<String> keywords, final String status,
       final String resolution, final String type, final String version, final String milestone, final String reporter,
       final Date time, final String component, final String description, final String priority, final String severity,
-      final String owner, final Date changetime, final List<String> cc)
+      final String owner, final Date changetime, final List<String> cc, final List<TracIssueComment> tracIssueComments)
   {
     this.id = id;
     this.summary = summary;
@@ -115,6 +119,10 @@ public class TracIssue
     this.owner = owner;
     this.changetime = changetime;
     this.cc = cc;
+
+    final List<TracIssueComment> comments = newArrayList(tracIssueComments);
+    Collections.sort(comments);
+    this.tracIssueComments = Collections.unmodifiableList(comments);
   }
 
   public Integer getId()
@@ -212,11 +220,16 @@ public class TracIssue
     return cc;
   }
 
+  public List<TracIssueComment> getTracIssueComments()
+  {
+    return tracIssueComments;
+  }
+
   @Override
   public int hashCode()
   {
     return hash(id, summary, keywords, status, resolution, type, version, milestone, reporter, time, component,
-        description, priority, severity, owner, changetime, cc);
+        description, priority, severity, owner, changetime, cc, tracIssueComments);
   }
 
   @Override
@@ -229,23 +242,24 @@ public class TracIssue
     final TracIssue that = castIfInstanceOf(TracIssue.class, tracIssue);
     /* @formatter:off */
     return null != that &&
-            (equal(this.id,           that.id) &&
-             equal(this.summary,      that.summary) &&
-             equal(this.keywords,     that.keywords) &&
-             equal(this.status,       that.status) &&
-             equal(this.resolution,   that.resolution) &&
-             equal(this.type,         that.type) &&
-             equal(this.version,      that.version) &&
-             equal(this.milestone,    that.milestone) &&
-             equal(this.reporter,     that.reporter) &&
-             equal(this.time,         that.time) &&
-             equal(this.component,    that.component) &&
-             equal(this.description,  that.description) &&
-             equal(this.priority,     that.priority) &&
-             equal(this.severity,     that.severity) &&
-             equal(this.owner,        that.owner) &&
-             equal(this.changetime,   that.changetime) &&
-             equal(this.cc,           that.cc));
+            (equal(this.id,                 that.id) &&
+             equal(this.summary,            that.summary) &&
+             equal(this.keywords,           that.keywords) &&
+             equal(this.status,             that.status) &&
+             equal(this.resolution,         that.resolution) &&
+             equal(this.type,               that.type) &&
+             equal(this.version,            that.version) &&
+             equal(this.milestone,          that.milestone) &&
+             equal(this.reporter,           that.reporter) &&
+             equal(this.time,               that.time) &&
+             equal(this.component,          that.component) &&
+             equal(this.description,        that.description) &&
+             equal(this.priority,           that.priority) &&
+             equal(this.severity,           that.severity) &&
+             equal(this.owner,              that.owner) &&
+             equal(this.changetime,         that.changetime) &&
+             equal(this.cc,                 that.cc) &&
+             equal(this.tracIssueComments,  that.tracIssueComments));
     /* @formatter:on */
   }
 
@@ -271,11 +285,13 @@ public class TracIssue
             .add("owner", owner)
             .add("changetime", changetime)
             .add("cc", cc)
+            .add("tracIssueComments", tracIssueComments)
           .toString();
     /* @formatter:on */
   }
 
-  public static TracIssue newInstance(final Integer id, final Map<String, Object> map)
+  public static TracIssue newInstance(final Integer id, final Map<String, Object> map,
+      final List<TracIssueComment> tracIssueComments)
   {
     /* @formatter:off */
     final String keywords = (String) map.get("keywords");
@@ -300,7 +316,23 @@ public class TracIssue
                          (Date) map.get("changetime"),
                          isNullOrEmptyString(cc) ?
                              Collections.<String> emptyList() :
-                             Arrays.asList(cc.split("[\\s]*,[\\s]*")));
+                             Arrays.asList(cc.split("[\\s]*,[\\s]*")),
+                         tracIssueComments);
     /* @formatter:on */
+  }
+
+  public static TracIssue newInstance(final Integer id, final Map<String, Object> map, final Object[] changeLogs)
+  {
+    final List<TracIssueComment> tracIssueComments = newArrayList();
+    final int length = changeLogs.length;
+    for (int i = 0; i < length; i++)
+    {
+      final Object[] changeLog = (Object[]) changeLogs[i];
+      if (TracIssueComment.isComment(changeLog))
+      {
+        tracIssueComments.add(TracIssueComment.newInstance(id, i, changeLog));
+      }
+    }
+    return newInstance(id, map, tracIssueComments);
   }
 }

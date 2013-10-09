@@ -196,7 +196,7 @@ public class Trac2GitLabUtilTest
   {
     /* given */
     final String tracWikiText =
-      "{{{#!text/javascript\n{\n  \"name\":\"Kevin\"\n\"something\":{\"someObject\":{\"id\":1}}}\n}}}\nblah blah blah blah\n{{{\n#!text/javascript\n{\n  \"id\": 1\n}\n}}}";
+      "{{{  #!text/javascript\n{\n  \"name\":\"Kevin\"\n\"something\":{\"someObject\":{\"id\":1}}}\n}}}\nblah blah blah blah\n{{{\n#!text/javascript\n{\n  \"id\": 1\n}\n}}}";
     final String expected =
       "```javascript\n{\n  \"name\":\"Kevin\"\n\"something\":{\"someObject\":{\"id\":1}}}\n```\nblah blah blah blah\n```javascript\n{\n  \"id\": 1\n}\n```";
 

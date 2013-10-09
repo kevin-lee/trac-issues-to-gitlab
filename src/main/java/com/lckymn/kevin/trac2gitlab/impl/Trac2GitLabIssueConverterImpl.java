@@ -7,7 +7,6 @@ import static org.elixirian.kommonlee.util.Objects.*;
 import static org.elixirian.kommonlee.util.Strings.*;
 import static org.elixirian.kommonlee.util.collect.Lists.*;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +17,7 @@ import com.lckymn.kevin.gitlab.json.GitLabProject;
 import com.lckymn.kevin.gitlab.json.GitLabUser;
 import com.lckymn.kevin.trac.json.TracIssue;
 import com.lckymn.kevin.trac2gitlab.Trac2GitLabIssueConverter;
+import com.lckymn.kevin.trac2gitlab.Trac2GitLabUtil;
 
 /**
  * <pre>
@@ -40,8 +40,9 @@ public class Trac2GitLabIssueConverterImpl implements Trac2GitLabIssueConverter
     final List<String> labels = extractLabels(labelMap, tracIssue);
 
     final GitLabIssue.GitLabIssueForCreation gitLabIssueForCreation =
-      new GitLabIssueForCreation(gitLabProject.id, tracIssue.getSummary(), tracIssue.getDescription(), labels,
-          assignee.id, milestone.id);
+      new GitLabIssueForCreation(gitLabProject.id, tracIssue.getSummary(),
+          Trac2GitLabUtil.convertCodeBlockForGitLabMarkDown(tracIssue.getDescription()), labels, assignee.id,
+          milestone.id);
     return gitLabIssueForCreation;
   }
 

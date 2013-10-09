@@ -27,7 +27,6 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 import com.lckymn.kevin.trac.json.TracIssue;
-import com.lckymn.kevin.trac.json.TracIssueComment;
 import com.lckymn.kevin.trac.rpc.TracRpcConfig;
 import com.lckymn.kevin.trac.rpc.TracRpcService;
 import com.lckymn.kevin.xmlrpc.exception.RuntimeXmlRpcException;

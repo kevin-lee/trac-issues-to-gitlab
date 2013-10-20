@@ -18,6 +18,7 @@ package com.lckymn.kevin.trac.rpc.xmlrpc;
 import static org.elixirian.kommonlee.util.collect.Lists.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -27,6 +28,7 @@ import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 
 import com.lckymn.kevin.trac.json.TracIssue;
+import com.lckymn.kevin.trac.json.TracMilestone;
 import com.lckymn.kevin.trac.rpc.TracRpcConfig;
 import com.lckymn.kevin.trac.rpc.TracRpcService;
 import com.lckymn.kevin.xmlrpc.exception.RuntimeXmlRpcException;
@@ -50,7 +52,7 @@ public class TracXmlRpcService implements TracRpcService
   }
 
   @Override
-  public TracIssue get(final Integer id)
+  public TracIssue getIssue(final Integer id)
   {
     final Object[] results;
     final Object[] changeLogs;
@@ -79,14 +81,14 @@ public class TracXmlRpcService implements TracRpcService
   }
 
   @Override
-  public List<TracIssue> getAll() throws RuntimeXmlRpcException
+  public List<TracIssue> getAllIssues() throws RuntimeXmlRpcException
   {
     final List<TracIssue> resultList = newArrayList();
     try
     {
       for (final Object id : (Object[]) xmlRpcClient.execute("ticket.query", Arrays.asList("max=0")))
       {
-        resultList.add(get((Integer) id));
+        resultList.add(getIssue((Integer) id));
       }
     }
     catch (final XmlRpcException e)
@@ -106,5 +108,28 @@ public class TracXmlRpcService implements TracRpcService
     final XmlRpcClient xmlRpcClient = new XmlRpcClient();
     xmlRpcClient.setConfig(xmlRpcClientConfig);
     return new TracXmlRpcService(xmlRpcClient);
+  }
+
+  @Override
+  public List<TracMilestone> getAllMilestones() throws RuntimeXmlRpcException
+  {
+    final List<TracMilestone> result = newArrayList();
+    try
+    {
+      for (final Object milestoneName : (Object[]) xmlRpcClient.execute("ticket.milestone.getAll",
+          Collections.emptyList()))
+      {
+        @SuppressWarnings("unchecked")
+        final Map<String, Object> map =
+          (Map<String, Object>) xmlRpcClient.execute("ticket.milestone.get", Arrays.asList(milestoneName));
+
+        result.add(TracMilestone.newTracMilestone(map));
+      }
+    }
+    catch (final XmlRpcException e)
+    {
+      throw new RuntimeXmlRpcException(e);
+    }
+    return result;
   }
 }

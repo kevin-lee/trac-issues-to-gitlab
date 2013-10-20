@@ -17,15 +17,18 @@ package com.lckymn.kevin.trac.rpc.xmlrpc;
 
 import static org.elixirian.kommonlee.util.collect.Maps.*;
 import static org.fest.assertions.api.Assertions.*;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfig;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
@@ -34,9 +37,12 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import com.lckymn.kevin.trac.json.TracIssue;
 import com.lckymn.kevin.trac.json.TracIssueComment;
+import com.lckymn.kevin.trac.json.TracMilestone;
 import com.lckymn.kevin.trac.rpc.TracRpcConfig;
 import com.lckymn.kevin.util.DateAndTimeFormatUtil;
 
@@ -82,7 +88,7 @@ public class TracXmlRpcServiceTest
   }
 
   @Test
-  public final void testGet() throws Exception
+  public final void testGetIssue() throws Exception
   {
     /* given */
     final XmlRpcClient xmlRpcClient = mock(XmlRpcClient.class);
@@ -140,7 +146,7 @@ public class TracXmlRpcServiceTest
     final TracXmlRpcService tracXmlRpcService = new TracXmlRpcService(xmlRpcClient);
 
     /* when */
-    final TracIssue actual = tracXmlRpcService.get(id);
+    final TracIssue actual = tracXmlRpcService.getIssue(id);
 
     /* then */
     assertThat(actual).isEqualTo(expected);
@@ -156,7 +162,7 @@ public class TracXmlRpcServiceTest
   }
 
   @Test
-  public final void testGetAll() throws Exception
+  public final void testGetIssueAllIssues() throws Exception
   {
     /* given */
     final XmlRpcClient xmlRpcClient = mock(XmlRpcClient.class);
@@ -214,7 +220,7 @@ public class TracXmlRpcServiceTest
     final TracXmlRpcService tracXmlRpcService = new TracXmlRpcService(xmlRpcClient);
 
     /* when */
-    final List<TracIssue> actual = tracXmlRpcService.getAll();
+    final List<TracIssue> actual = tracXmlRpcService.getAllIssues();
 
     /* then */
     assertThat(actual).isEqualTo(expected);
@@ -250,4 +256,61 @@ public class TracXmlRpcServiceTest
     assertThat(actual.getTimeZone()).isEqualTo(expected.getTimeZone());
   }
 
+  @Test
+  public void testGetAllMilestones() throws Exception
+  {
+    /* given */
+    final XmlRpcClient xmlRpcClient = mock(XmlRpcClient.class);
+    final Integer id = 1;
+
+    final Map<String, Object> map1 = newHashMap();
+    final String name1 = "Milestone 1";
+    map1.put("name", name1);
+    final String description1 = "This is the first milestone";
+    map1.put("description", description1);
+    final Date due1 = DateAndTimeFormatUtil.parseUtcDateAndTimeIfNeitherNullNorEmpty("2013-01-01T15:00:00Z");
+    map1.put("due", due1);
+    final Date completed1 = DateAndTimeFormatUtil.parseUtcDateAndTimeIfNeitherNullNorEmpty("2013-01-05T10:30:22Z");
+    map1.put("completed", completed1);
+
+    final Map<String, Object> map2 = newHashMap();
+    final String name2 = "Milestone 2";
+    map2.put("name", name2);
+    final String description2 = "Another";
+    map2.put("description", description2);
+    final Integer due2 = 0;
+    map2.put("due", due2);
+    final Integer completed2 = 0;
+    map2.put("completed", completed2);
+
+    when(xmlRpcClient.execute("ticket.milestone.getAll", Collections.emptyList())).thenReturn(
+        new Object[] { name1, name2 });
+    when(xmlRpcClient.execute("ticket.milestone.get", Arrays.asList(name1))).thenReturn(map1);
+    when(xmlRpcClient.execute("ticket.milestone.get", Arrays.asList(name2))).thenReturn(map2);
+
+    final Object[] changeLogs =
+      new Object[] { new Object[] { new Date(), "kevinlee", "comment", "1", "some test comment", 1 },
+          new Object[] { new Date(), "kevinlee", "resolution", "", "fixed", 1 },
+          new Object[] { new Date(), "kevinlee", "comment", "1", "something else", 1 },
+          new Object[] { new Date(), "kevinlee", "status", "closed", "reopened", 1 },
+          new Object[] { new Date(), "kevinlee", "resolution", "", "fixed", 1 },
+          new Object[] { new Date(), "kevinlee", "comment", "1", "blah blah", 1 } };
+    when(xmlRpcClient.execute("ticket.changeLog", Arrays.asList(id, 0))).thenReturn(changeLogs);
+
+    final List<TracMilestone> expected =
+      Arrays.asList(TracMilestone.newTracMilestone(name1, description1, due1, completed1),
+          TracMilestone.newTracMilestone(name2, description2, null, null));
+    final TracXmlRpcService tracXmlRpcService = new TracXmlRpcService(xmlRpcClient);
+
+    /* when */
+    final List<TracMilestone> actual = tracXmlRpcService.getAllMilestones();
+    System.out.println("actual: \n" + actual);
+
+    /* then */
+    assertThat(actual).isEqualTo(expected);
+    assertThat(actual.size()).isEqualTo(expected.size());
+    verify(xmlRpcClient, times(1)).execute("ticket.milestone.getAll", Collections.emptyList());
+    verify(xmlRpcClient, times(1)).execute("ticket.milestone.get", Arrays.asList(name1));
+    verify(xmlRpcClient, times(1)).execute("ticket.milestone.get", Arrays.asList(name2));
+  }
 }

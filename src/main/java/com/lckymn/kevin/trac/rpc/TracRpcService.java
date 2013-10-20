@@ -18,6 +18,7 @@ package com.lckymn.kevin.trac.rpc;
 import java.util.List;
 
 import com.lckymn.kevin.trac.json.TracIssue;
+import com.lckymn.kevin.trac.json.TracMilestone;
 import com.lckymn.kevin.xmlrpc.exception.RuntimeXmlRpcException;
 
 /**
@@ -26,7 +27,9 @@ import com.lckymn.kevin.xmlrpc.exception.RuntimeXmlRpcException;
  */
 public interface TracRpcService
 {
-  List<TracIssue> getAll() throws RuntimeXmlRpcException;
+  List<TracIssue> getAllIssues() throws RuntimeXmlRpcException;
 
-  TracIssue get(Integer id);
+  TracIssue getIssue(Integer id);
+
+  List<TracMilestone> getAllMilestones();
 }

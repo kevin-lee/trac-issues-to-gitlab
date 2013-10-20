@@ -20,7 +20,6 @@ import static org.elixirian.kommonlee.util.collect.Maps.*;
 import static org.fest.assertions.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;

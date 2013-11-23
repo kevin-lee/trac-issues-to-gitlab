@@ -15,30 +15,32 @@
  */
 package com.lckymn.kevin.trac.rpc.xmlrpc;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.elixirian.kommonlee.util.collect.Maps.*;
-import static org.fest.assertions.api.Assertions.*;
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfig;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.assertj.core.api.Condition;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import com.lckymn.kevin.trac.json.TracIssue;
 import com.lckymn.kevin.trac.json.TracIssueComment;
@@ -50,8 +52,13 @@ import com.lckymn.kevin.util.DateAndTimeFormatUtil;
  * @author Lee, SeongHyun (Kevin)
  * @version 0.0.1 (2013-09-01)
  */
+@RunWith(MockitoJUnitRunner.class)
 public class TracXmlRpcServiceTest
 {
+  @Mock
+  private XmlRpcClient xmlRpcClient;
+  @InjectMocks
+  private TracXmlRpcService tracXmlRpcService;
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception
@@ -77,7 +84,7 @@ public class TracXmlRpcServiceTest
   public final void testTracXmlRpcService() throws Exception
   {
     /* given */
-    final XmlRpcClient expected = mock(XmlRpcClient.class);
+    final XmlRpcClient expected = this.xmlRpcClient;
 
     /* when */
     final TracXmlRpcService tracXmlRpcService = new TracXmlRpcService(expected);
@@ -91,7 +98,7 @@ public class TracXmlRpcServiceTest
   public final void testGetIssue() throws Exception
   {
     /* given */
-    final XmlRpcClient xmlRpcClient = mock(XmlRpcClient.class);
+    final XmlRpcClient xmlRpcClient = this.xmlRpcClient;
     final Integer id = 1;
 
     final Map<String, Object> map = newHashMap();
@@ -149,7 +156,14 @@ public class TracXmlRpcServiceTest
     final TracIssue actual = tracXmlRpcService.getIssue(id);
 
     /* then */
-    assertThat(actual).isEqualTo(expected);
+    assertThat(actual).isEqualTo(expected)
+        .is(new Condition<TracIssue>() {
+          @Override
+          public boolean matches(final TracIssue value)
+          {
+            return value.hasSameDataAs(expected);
+          }
+        });
     final List<TracIssueComment> actualTracIssueComments = actual.getTracIssueComments();
     assertThat(actualTracIssueComments).isEqualTo(expectedTracIssueComments);
     assertThat(actualTracIssueComments.get(0)
@@ -165,7 +179,7 @@ public class TracXmlRpcServiceTest
   public final void testGetIssueAllIssues() throws Exception
   {
     /* given */
-    final XmlRpcClient xmlRpcClient = mock(XmlRpcClient.class);
+    final XmlRpcClient xmlRpcClient = this.xmlRpcClient;
     final Integer id = 1;
 
     final Map<String, Object> map = newHashMap();
@@ -223,7 +237,23 @@ public class TracXmlRpcServiceTest
     final List<TracIssue> actual = tracXmlRpcService.getAllIssues();
 
     /* then */
-    assertThat(actual).isEqualTo(expected);
+    assertThat(actual).hasSameSizeAs(expected)
+        .isEqualTo(expected);
+
+    final Iterator<TracIssue> tracIssueActualIterator = actual.iterator();
+    final Iterator<TracIssue> tracIssueExpecetedIterator = expected.iterator();
+    while (tracIssueActualIterator.hasNext())
+    {
+      final TracIssue actualNext = tracIssueActualIterator.next();
+      final TracIssue expectedNext = tracIssueExpecetedIterator.next();
+      assertThat(actualNext).is(new Condition<TracIssue>() {
+        @Override
+        public boolean matches(final TracIssue value)
+        {
+          return value.hasSameDataAs(expectedNext);
+        }
+      });
+    }
     verify(xmlRpcClient, times(1)).execute("ticket.query", Arrays.asList("max=0"));
   }
 
@@ -260,7 +290,7 @@ public class TracXmlRpcServiceTest
   public void testGetAllMilestones() throws Exception
   {
     /* given */
-    final XmlRpcClient xmlRpcClient = mock(XmlRpcClient.class);
+    final XmlRpcClient xmlRpcClient = this.xmlRpcClient;
     final Integer id = 1;
 
     final Map<String, Object> map1 = newHashMap();
@@ -304,11 +334,10 @@ public class TracXmlRpcServiceTest
 
     /* when */
     final List<TracMilestone> actual = tracXmlRpcService.getAllMilestones();
-    System.out.println("actual: \n" + actual);
 
     /* then */
-    assertThat(actual).isEqualTo(expected);
-    assertThat(actual.size()).isEqualTo(expected.size());
+    assertThat(actual).hasSameSizeAs(expected)
+        .isEqualTo(expected);
     verify(xmlRpcClient, times(1)).execute("ticket.milestone.getAll", Collections.emptyList());
     verify(xmlRpcClient, times(1)).execute("ticket.milestone.get", Arrays.asList(name1));
     verify(xmlRpcClient, times(1)).execute("ticket.milestone.get", Arrays.asList(name2));

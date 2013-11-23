@@ -29,6 +29,7 @@ import org.elixirian.jsonstatham.annotation.Json;
 import org.elixirian.jsonstatham.annotation.JsonField;
 import org.elixirian.jsonstatham.annotation.ValueAccessor;
 
+import com.lckymn.kevin.common.ObjectStateComparable;
 import com.lckymn.kevin.util.DateAndTimeFormatUtil;
 
 /**
@@ -36,7 +37,7 @@ import com.lckymn.kevin.util.DateAndTimeFormatUtil;
  * @version 0.0.1 (2013-08-29)
  */
 @Json
-public class TracIssue
+public class TracIssue implements ObjectStateComparable<TracIssue>
 {
   @JsonField
   private final Integer id;
@@ -228,8 +229,7 @@ public class TracIssue
   @Override
   public int hashCode()
   {
-    return hash(id, summary, keywords, status, resolution, type, version, milestone, reporter, time, component,
-        description, priority, severity, owner, changetime, cc, tracIssueComments);
+    return hash(id);
   }
 
   @Override
@@ -241,25 +241,8 @@ public class TracIssue
     }
     final TracIssue that = castIfInstanceOf(TracIssue.class, tracIssue);
     /* @formatter:off */
-    return null != that &&
-            (equal(this.id,                 that.id) &&
-             equal(this.summary,            that.summary) &&
-             equal(this.keywords,           that.keywords) &&
-             equal(this.status,             that.status) &&
-             equal(this.resolution,         that.resolution) &&
-             equal(this.type,               that.type) &&
-             equal(this.version,            that.version) &&
-             equal(this.milestone,          that.milestone) &&
-             equal(this.reporter,           that.reporter) &&
-             equal(this.time,               that.time) &&
-             equal(this.component,          that.component) &&
-             equal(this.description,        that.description) &&
-             equal(this.priority,           that.priority) &&
-             equal(this.severity,           that.severity) &&
-             equal(this.owner,              that.owner) &&
-             equal(this.changetime,         that.changetime) &&
-             equal(this.cc,                 that.cc) &&
-             equal(this.tracIssueComments,  that.tracIssueComments));
+    return that != null &&
+            (equal(this.id, that.id));
     /* @formatter:on */
   }
 
@@ -334,5 +317,35 @@ public class TracIssue
       }
     }
     return newInstance(id, map, tracIssueComments);
+  }
+
+  @Override
+  public boolean hasSameDataAs(final TracIssue that)
+  {
+    if (this == that)
+    {
+      return true;
+    }
+    /* @formatter:off */
+    return null != that &&
+            (equal(this.id,                 that.id) &&
+             equal(this.summary,            that.summary) &&
+             equal(this.keywords,           that.keywords) &&
+             equal(this.status,             that.status) &&
+             equal(this.resolution,         that.resolution) &&
+             equal(this.type,               that.type) &&
+             equal(this.version,            that.version) &&
+             equal(this.milestone,          that.milestone) &&
+             equal(this.reporter,           that.reporter) &&
+             equal(this.time,               that.time) &&
+             equal(this.component,          that.component) &&
+             equal(this.description,        that.description) &&
+             equal(this.priority,           that.priority) &&
+             equal(this.severity,           that.severity) &&
+             equal(this.owner,              that.owner) &&
+             equal(this.changetime,         that.changetime) &&
+             equal(this.cc,                 that.cc) &&
+             equal(this.tracIssueComments,  that.tracIssueComments));
+    /* @formatter:on */
   }
 }

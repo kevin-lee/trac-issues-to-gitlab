@@ -24,12 +24,14 @@ import org.elixirian.jsonstatham.annotation.Json;
 import org.elixirian.jsonstatham.annotation.JsonField;
 import org.elixirian.jsonstatham.annotation.ValueAccessor;
 
+import com.lckymn.kevin.common.ObjectStateComparable;
+
 /**
  * @author Lee, SeongHyun (Kevin)
  * @version 0.0.1 (2013-09-06)
  */
 @Json
-public class GitLabUser
+public class GitLabUser implements ObjectStateComparable<GitLabUser>
 {
   public static final GitLabUser[] EMPTY_GIT_LAB_USER_ARRAY = new GitLabUser[0];
 
@@ -105,8 +107,7 @@ public class GitLabUser
   @Override
   public int hashCode()
   {
-    return hash(this.id, this.username, this.email, this.name, this.bio, this.skype, this.linkedin, this.twitter,
-        this.themeId, this.colorSchemeId, this.state, this.createdAt, this.externUid, this.provider);
+    return hash(this.username);
   }
 
   @Override
@@ -119,20 +120,64 @@ public class GitLabUser
     final GitLabUser that = castIfInstanceOf(GitLabUser.class, gitLabUser);
     /* @formatter:off */
     return null != that &&
-             (equal(this.id, that.id) &&
-              equal(this.username, that.username) &&
-              equal(this.email, that.email) &&
-              equal(this.name, that.name) &&
-              equal(this.bio, that.bio) &&
-              equal(this.skype, that.skype) &&
-              equal(this.linkedin, that.linkedin) &&
-              equal(this.twitter, that.twitter) &&
-              equal(this.themeId, that.themeId) &&
-              equal(this.colorSchemeId, that.colorSchemeId) &&
-              equal(this.state, that.state) &&
-              equal(this.createdAt, that.createdAt) &&
-              equal(this.externUid, that.externUid) &&
-              equal(this.provider, that.provider));
+             (equal(this.username, that.username));
+    /* @formatter:on */
+  }
+
+  @Override
+  public String toString()
+  {
+    /* @formatter:off */
+    return toStringBuilder(this)
+            .add("id", id)
+            .add("username", username)
+            .add("email", email)
+            .add("name", name)
+            .add("bio", bio)
+            .add("skype", skype)
+            .add("linkedin", linkedin)
+            .add("twitter", twitter)
+            .add("themeId", themeId)
+            .add("colorSchemeId", colorSchemeId)
+            .add("state", state)
+            .add("createdAt", createdAt)
+            .add("externUid", externUid)
+            .add("provider", provider)
+          .toString();
+    /* @formatter:on */
+  }
+
+  public static GitLabUser newGitLabUser(final Integer id, final String username, final String email,
+      final String name, final String bio, final String skype, final String linkedin, final String twitter,
+      final Integer themeId, final Integer colorSchemeId, final String state, final String createdAt,
+      final String externUid, final String provider)
+  {
+    return new GitLabUser(id, username, email, name, bio, skype, linkedin, twitter, themeId, colorSchemeId, state,
+        createdAt, externUid, provider);
+  }
+
+  @Override
+  public boolean hasSameDataAs(final GitLabUser that)
+  {
+    if (this == that)
+    {
+      return true;
+    }
+    /* @formatter:off */
+    return (equal(this.id, that.id) &&
+            equal(this.username, that.username) &&
+            equal(this.email, that.email) &&
+            equal(this.name, that.name) &&
+            equal(this.bio, that.bio) &&
+            equal(this.skype, that.skype) &&
+            equal(this.linkedin, that.linkedin) &&
+            equal(this.twitter, that.twitter) &&
+            equal(this.themeId, that.themeId) &&
+            equal(this.colorSchemeId, that.colorSchemeId) &&
+            equal(this.state, that.state) &&
+            equal(this.createdAt, that.createdAt) &&
+            equal(this.externUid, that.externUid) &&
+            equal(this.provider, that.provider));
     /* @formatter:on */
   }
 }

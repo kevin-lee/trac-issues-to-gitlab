@@ -54,6 +54,52 @@ public class GitLabMilestone
     {
       return formatUtcDateIfNotNull(dueDate);
     }
+
+    @Override
+    public int hashCode()
+    {
+      return hash(title, description, dueDate);
+    }
+
+    @Override
+    public boolean equals(final Object gitLabMilestoneForCreation)
+    {
+      if (this == gitLabMilestoneForCreation)
+      {
+        return true;
+      }
+      final GitLabMilestoneForCreation that =
+        castIfInstanceOf(GitLabMilestoneForCreation.class, gitLabMilestoneForCreation);
+      /* @formatter:off */
+      return null != that && (
+                equal(this.title, that.title) &&
+                equal(this.description, that.description) &&
+                equal(this.dueDate, that.dueDate));
+      /* @formatter:on */
+    }
+
+    @Override
+    public String toString()
+    {
+      /* @formatter:off */
+      return toStringBuilder(this)
+              .add("title", title)
+              .add("description", description)
+              .add("dueDate", getDueDateInUtcString())
+            .toString();
+      /* @formatter:on */
+    }
+
+    public static GitLabMilestoneForCreation newGitLabMilestoneForCreation(final String title,
+        final String description, final Date dueDate)
+    {
+      return new GitLabMilestoneForCreation(title, description, dueDate);
+    }
+
+    public static GitLabMilestoneForCreation newGitLabMilestoneForCreation(final GitLabMilestone gitLabMilestone)
+    {
+      return new GitLabMilestoneForCreation(gitLabMilestone.title, gitLabMilestone.description, gitLabMilestone.dueDate);
+    }
   }
 
   public static final GitLabMilestone EMPTY_GIT_LAB_MILESTONE = new GitLabMilestone(null, null, "", "", null, "", null,

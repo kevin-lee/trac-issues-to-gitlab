@@ -17,7 +17,7 @@ package com.lckymn.kevin.gitlab.api.impl;
 
 import static com.lckymn.kevin.gitlab.api.GitLabApiUtil.*;
 import static org.elixirian.kommonlee.util.collect.Lists.*;
-import static org.fest.assertions.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;

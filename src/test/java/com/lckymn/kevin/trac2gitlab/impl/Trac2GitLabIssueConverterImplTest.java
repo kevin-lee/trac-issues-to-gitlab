@@ -17,7 +17,7 @@ package com.lckymn.kevin.trac2gitlab.impl;
 
 import static java.util.Arrays.*;
 import static org.elixirian.kommonlee.util.collect.Maps.*;
-import static org.fest.assertions.api.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.Collections;

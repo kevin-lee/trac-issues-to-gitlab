@@ -15,10 +15,6 @@
  */
 package com.lckymn.kevin.trac2gitlab.impl;
 
-import static org.elixirian.kommonlee.util.Objects.*;
-import static org.elixirian.kommonlee.util.Strings.*;
-import static org.elixirian.kommonlee.util.collect.Lists.*;
-
 import java.util.List;
 import java.util.Map;
 
@@ -53,51 +49,6 @@ public class Trac2GitLabIssueConverterImpl implements Trac2GitLabIssueConverter
   @Override
   public List<String> extractLabels(final Map<String, String> labelMap, final TracIssue tracIssue)
   {
-    final List<String> labels = newArrayList();
-    final String severity = nullSafeTrim(tracIssue.getSeverity()).toLowerCase();
-    if (!severity.isEmpty())
-    {
-      final String labelFound = nullThenUse(labelMap.get(severity), "");
-      if (!labelFound.isEmpty())
-      {
-        labels.add(labelFound);
-      }
-    }
-    else
-    {
-      final String priority = nullSafeTrim(tracIssue.getPriority()).toLowerCase();
-      if (!priority.isEmpty())
-      {
-        final String labelFound = nullThenUse(labelMap.get(priority), "");
-        if (!labelFound.isEmpty())
-        {
-          labels.add(labelFound);
-        }
-      }
-    }
-
-    final String type = nullSafeTrim(tracIssue.getType()).toLowerCase();
-    if (!type.isEmpty())
-    {
-      final String labelFound = nullThenUse(labelMap.get(type), "");
-      if (!labelFound.isEmpty())
-      {
-        labels.add(labelFound);
-      }
-    }
-
-    if ("closed".equalsIgnoreCase(tracIssue.getStatus()))
-    {
-      final String resolution = nullSafeTrim(tracIssue.getResolution()).toLowerCase();
-      if (!resolution.isEmpty())
-      {
-        final String labelFound = nullThenUse(labelMap.get(resolution), "");
-        if (!labelFound.isEmpty())
-        {
-          labels.add(labelFound);
-        }
-      }
-    }
-    return labels;
+    return Trac2GitLabUtil.extractLabels(labelMap, tracIssue);
   }
 }

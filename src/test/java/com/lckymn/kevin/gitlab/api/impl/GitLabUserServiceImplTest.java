@@ -1,12 +1,14 @@
 package com.lckymn.kevin.gitlab.api.impl;
 
 import static com.lckymn.kevin.gitlab.api.GitLabApiUtil.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.elixirian.kommonlee.util.collect.Lists.*;
-import static org.fest.assertions.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.Iterator;
 import java.util.List;
 
+import org.assertj.core.api.Condition;
 import org.elixirian.jsonstatham.core.JsonStatham;
 import org.elixirian.jsonstatham.core.reflect.ReflectionJsonStathams;
 import org.elixirian.kommonlee.util.collect.Sets;
@@ -310,7 +312,24 @@ public class GitLabUserServiceImplTest
     final List<GitLabUser> actual = gitLabUserService.getGitLabUsersByUsernames(privateToken, username1, username3);
 
     /* then */
-    assertThat(actual).isEqualTo(expected);
+    assertThat(actual).hasSameSizeAs(expected)
+        .containsAll(expected)
+        .isEqualTo(expected);
+
+    final Iterator<GitLabUser> actualIterator = actual.iterator();
+    final Iterator<GitLabUser> expectedIterator = expected.iterator();
+    while (actualIterator.hasNext())
+    {
+      final GitLabUser actualEach = actualIterator.next();
+      final GitLabUser expectedEach = expectedIterator.next();
+      assertThat(actualEach).is(new Condition<GitLabUser>() {
+        @Override
+        public boolean matches(final GitLabUser value)
+        {
+          return value.hasSameDataAs(expectedEach);
+        }
+      });
+    }
   }
 
 }

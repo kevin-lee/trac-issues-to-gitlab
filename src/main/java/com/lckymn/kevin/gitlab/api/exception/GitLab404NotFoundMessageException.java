@@ -23,12 +23,6 @@ public class GitLab404NotFoundMessageException extends GitLabMessageException
 {
   private static final long serialVersionUID = 6094328692344008154L;
 
-  public GitLab404NotFoundMessageException(final String message, final Throwable cause,
-      final boolean enableSuppression, final boolean writableStackTrace)
-  {
-    super(message, cause, enableSuppression, writableStackTrace);
-  }
-
   public GitLab404NotFoundMessageException(final String message, final Throwable cause)
   {
     super(message, cause);

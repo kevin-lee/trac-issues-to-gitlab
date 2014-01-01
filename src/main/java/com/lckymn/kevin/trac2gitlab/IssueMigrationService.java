@@ -15,8 +15,11 @@
  */
 package com.lckymn.kevin.trac2gitlab;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
+
+import org.elixirian.kommonlee.io.exception.RuntimeIoException;
 
 import com.lckymn.kevin.gitlab.json.GitLabProject;
 import com.lckymn.kevin.trac.json.TracIssue;
@@ -33,4 +36,7 @@ public interface IssueMigrationService
 
   Trac2GitLabIssueMigrationResult migrate(String privateToken, GitLabProject gitLabProject,
       Map<String, String> labelMap, Map<String, TracMilestone> milestoneToTracMilestoneMap, List<TracIssue> tracIssues);
+
+  File saveMigrationResult(File path, Trac2GitLabIssueMigrationResult trac2GitLabIssueMigrationResult)
+      throws RuntimeIoException;
 }

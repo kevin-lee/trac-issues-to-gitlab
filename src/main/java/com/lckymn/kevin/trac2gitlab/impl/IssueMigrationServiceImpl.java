@@ -20,10 +20,17 @@ import static org.elixirian.kommonlee.util.Strings.*;
 import static org.elixirian.kommonlee.util.collect.Maps.*;
 import static org.elixirian.kommonlee.util.type.Tuples.*;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.elixirian.jsonstatham.core.JsonStatham;
+import org.elixirian.kommonlee.io.DataProducers;
+import org.elixirian.kommonlee.io.IoCommonConstants;
+import org.elixirian.kommonlee.io.exception.RuntimeIoException;
+import org.elixirian.kommonlee.io.util.FileUtil;
+import org.elixirian.kommonlee.nio.util.NioUtil;
 import org.elixirian.kommonlee.type.Tuple2;
 import org.elixirian.kommonlee.type.functional.Function1;
 
@@ -49,6 +56,30 @@ import com.lckymn.kevin.trac2gitlab.json.Trac2GitLabIssueMigrationResult.Builder
  */
 public class IssueMigrationServiceImpl implements IssueMigrationService
 {
+  public interface FilenameResolver extends Function1<String, File>
+  {
+    @Override
+    File apply(String filename);
+  }
+
+  public static FilenameResolver DEFAULT_FILENAME_RESOLVER = new FilenameResolver() {
+
+    @Override
+    public File apply(final String filename)
+    {
+      final String newFilename =
+        FileUtil.addBeforeExtensionIfExtensionExists(filename, "-" + System.currentTimeMillis());
+
+      final File pathToUse = new File(newFilename);
+      if (pathToUse.exists())
+      {
+        return apply(filename);
+      }
+      return pathToUse;
+    }
+
+  };
+
   private final Integer version;
 
   private final GitLabIssueService gitLabIssueService;
@@ -56,15 +87,30 @@ public class IssueMigrationServiceImpl implements IssueMigrationService
   private final GitLabUserService gitLabUserService;
   private final Trac2GitLabIssueConverter trac2GitLabIssueConverter;
 
+  private final JsonStatham jsonStatham;
+
+  private FilenameResolver filenameResolver;
+
   public IssueMigrationServiceImpl(final Integer version, final GitLabIssueService gitLabIssueService,
       final GitLabMilestoneService gitLabMilestoneService, final GitLabUserService gitLabUserService,
-      final Trac2GitLabIssueConverter trac2GitLabIssueConverter)
+      final Trac2GitLabIssueConverter trac2GitLabIssueConverter, final JsonStatham jsonStatham,
+      final FilenameResolver filenameResolver)
   {
     this.version = version;
     this.gitLabIssueService = gitLabIssueService;
     this.gitLabMilestoneService = gitLabMilestoneService;
     this.gitLabUserService = gitLabUserService;
     this.trac2GitLabIssueConverter = trac2GitLabIssueConverter;
+    this.jsonStatham = jsonStatham;
+    this.filenameResolver = filenameResolver;
+  }
+
+  public IssueMigrationServiceImpl(final Integer version, final GitLabIssueService gitLabIssueService,
+      final GitLabMilestoneService gitLabMilestoneService, final GitLabUserService gitLabUserService,
+      final Trac2GitLabIssueConverter trac2GitLabIssueConverter, final JsonStatham jsonStatham)
+  {
+    this(version, gitLabIssueService, gitLabMilestoneService, gitLabUserService, trac2GitLabIssueConverter,
+        jsonStatham, DEFAULT_FILENAME_RESOLVER);
   }
 
   @Override
@@ -134,11 +180,30 @@ public class IssueMigrationServiceImpl implements IssueMigrationService
 
       /* @formatter:off */
       builder.add(
-                  gitLabIssue.id,
                   entry.getValue(),
                   gitLabIssue);
       /* @formatter:on */
     }
     return builder.build();
+  }
+
+  @Override
+  public File saveMigrationResult(final File path, final Trac2GitLabIssueMigrationResult trac2GitLabIssueMigrationResult)
+      throws RuntimeIoException
+  {
+    File pathToUse = path;
+
+    if (pathToUse.exists())
+    {
+      final String filename = pathToUse.toString();
+
+      pathToUse = filenameResolver.apply(filename);
+    }
+
+    final String json = jsonStatham.convertIntoJson(trac2GitLabIssueMigrationResult);
+
+    NioUtil.writeFile(pathToUse, IoCommonConstants.BUFFER_SIZE_128Ki,
+        DataProducers.newSimpleByteArrayProducer(json.getBytes()));
+    return new File(pathToUse.toURI());
   }
 }

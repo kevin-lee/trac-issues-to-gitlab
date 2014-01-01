@@ -23,12 +23,6 @@ public class GitLab405MethodNotAllowedMessageException extends GitLabMessageExce
 {
   private static final long serialVersionUID = 6094328692344008154L;
 
-  public GitLab405MethodNotAllowedMessageException(final String message, final Throwable cause,
-      final boolean enableSuppression, final boolean writableStackTrace)
-  {
-    super(message, cause, enableSuppression, writableStackTrace);
-  }
-
   public GitLab405MethodNotAllowedMessageException(final String message, final Throwable cause)
   {
     super(message, cause);

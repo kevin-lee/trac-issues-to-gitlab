@@ -23,12 +23,6 @@ public class GitLabException extends RuntimeException
 {
   private static final long serialVersionUID = 6094328692344008154L;
 
-  public GitLabException(final String message, final Throwable cause, final boolean enableSuppression,
-      final boolean writableStackTrace)
-  {
-    super(message, cause, enableSuppression, writableStackTrace);
-  }
-
   public GitLabException(final String message, final Throwable cause)
   {
     super(message, cause);

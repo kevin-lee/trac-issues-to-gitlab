@@ -51,7 +51,8 @@ public class TracIssueComment implements Comparable<TracIssueComment>
   private final Integer tracIssueId;
 
   @JsonConstructor
-  public TracIssueComment(final int originalIndex, final Date time, final String owner, final String comment, final Integer tracIssueId)
+  public TracIssueComment(final int originalIndex, final Date time, final String owner, final String comment,
+      final Integer tracIssueId)
   {
     this.originalIndex = originalIndex;
     this.time = time;
@@ -93,7 +94,9 @@ public class TracIssueComment implements Comparable<TracIssueComment>
   @Override
   public int compareTo(final TracIssueComment that)
   {
-    return Integer.compare(this.originalIndex, that.getOriginalIndex());
+    final int thisIndex = this.originalIndex;
+    final int thatIndex = that.getOriginalIndex();
+    return thisIndex < thatIndex ? -1 : thisIndex == thatIndex ? 0 : 1;
   }
 
   @Override

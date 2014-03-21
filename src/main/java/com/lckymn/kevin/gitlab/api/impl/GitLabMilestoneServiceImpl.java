@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.elixirian.jsonstatham.core.JsonStatham;
+import org.elixirian.kommonlee.util.collect.Maps;
 
 import com.lckymn.kevin.gitlab.api.GitLabMilestoneService;
 import com.lckymn.kevin.gitlab.json.GitLabMilestone;
@@ -70,10 +71,11 @@ public class GitLabMilestoneServiceImpl extends AbstractGitLabService implements
   public GitLabMilestone createMilestone(final String privateToken, final Integer projectId,
       final GitLabMilestoneForCreation gitLabMilestoneForCreation)
   {
-    final Map<String, String> form = newHashMapWithInitialCapacity(3);
-    form.put("title", gitLabMilestoneForCreation.title);
-    form.put("description", gitLabMilestoneForCreation.description);
-    form.put("due_date", gitLabMilestoneForCreation.getDueDateInUtcString());
+    final Map<String, String> form = Maps.<String, String> hashMapBuilder()
+        .put("title", gitLabMilestoneForCreation.title)
+        .put("description", gitLabMilestoneForCreation.description)
+        .put("due_date", gitLabMilestoneForCreation.getDueDateInUtcString())
+        .build();
     final String result = httpRequestForJsonSource.post(prepareUrlForMilestones(projectsUrl, privateToken, projectId))
         .form(form)
         .body();
